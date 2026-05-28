@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmpireImmo - Calculateur v2 (Style Sombre)</title>
+    <title>EmpireImmo - Calculateur Mobile & PC</title>
     <style>
         :root {
-            --fond-sombre: #121824;
+            --fond-sombre: #0f172a;
             --fond-carte: #1e293b;
-            --fond-input: #0f172a;
+            --fond-input: #0b0f19;
             --texte-blanc: #f8fafc;
             --texte-gris: #94a3b8;
             --bleu-flash: #38bdf8;
@@ -18,47 +18,50 @@
             --orange-badge: #fb923c;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--fond-sombre);
             color: var(--texte-blanc);
             margin: 0;
-            padding: 20px 15px;
+            padding: 10px;
         }
 
         .container {
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             background: var(--fond-carte);
-            padding: 30px;
+            padding: 20px 15px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         h1 {
             text-align: center;
-            margin: 0 0 8px 0;
-            font-size: 26px;
+            margin: 5px 0;
+            font-size: 22px;
             color: var(--bleu-flash);
         }
 
         p.subtitle {
             text-align: center;
             color: var(--texte-gris);
-            margin-bottom: 30px;
-            font-size: 15px;
+            margin-bottom: 25px;
+            font-size: 14px;
         }
         
         .zone-outils {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
             background: #1e293b;
             border: 1px solid #334155;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
         }
 
@@ -66,6 +69,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+            width: 100%;
         }
 
         .groupe-case {
@@ -74,11 +78,12 @@
             gap: 10px;
             font-weight: 600;
             cursor: pointer;
+            padding: 5px 0;
         }
 
         .groupe-case input {
-            width: 18px;
-            height: 18px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
         }
 
@@ -90,14 +95,14 @@
         }
         
         input[type="text"] {
-            padding: 10px 14px;
+            padding: 12px;
             font-size: 16px;
             background-color: var(--fond-input);
             border: 2px solid #334155;
             border-radius: 8px;
             color: var(--texte-blanc);
             outline: none;
-            width: 200px;
+            width: 100%;
             font-weight: 600;
         }
         input:focus {
@@ -105,8 +110,8 @@
         }
         
         button {
-            padding: 11px 24px;
-            font-size: 15px;
+            padding: 14px;
+            font-size: 16px;
             font-weight: 700;
             background-color: var(--bleu-flash);
             color: #0f172a;
@@ -114,6 +119,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s;
+            width: 100%;
         }
         button:hover {
             background-color: var(--bleu-survol);
@@ -124,26 +130,28 @@
             text-align: center;
             font-weight: 600;
             color: var(--orange-badge);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            padding: 0 10px;
         }
 
         .conteneur-tableau {
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #334155;
+            background: #1e293b;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: #1e293b;
         }
 
         th, td {
-            padding: 15px 20px;
+            padding: 12px 10px;
             border-bottom: 1px solid #334155;
             text-align: left;
-            white-space: nowrap;
+            font-size: 13px;
         }
 
         th {
@@ -160,9 +168,8 @@
             color: var(--bleu-flash);
             cursor: pointer;
             font-weight: 600;
-        }
-        .nom-cliquable:hover {
-            text-decoration: underline;
+            white-space: normal; /* Permet au nom de passer à la ligne sur petit écran */
+            min-width: 120px;
         }
 
         .ligne-details {
@@ -171,10 +178,11 @@
         }
 
         .boite-details {
-            padding: 20px;
+            padding: 15px;
             border-left: 4px solid var(--bleu-flash);
-            font-size: 14px;
+            font-size: 13px;
             color: #cbd5e1;
+            white-space: normal;
         }
 
         .boite-details h4 {
@@ -182,10 +190,11 @@
             color: var(--texte-blanc);
             border-bottom: 1px solid #334155;
             padding-bottom: 6px;
+            font-size: 14px;
         }
         
         .selecteur-terrain {
-            padding: 6px 10px;
+            padding: 8px;
             border: 2px solid #334155;
             border-radius: 6px;
             font-weight: 600;
@@ -194,12 +203,14 @@
             cursor: pointer;
             outline: none;
             margin-top: 5px;
+            width: 100%;
+            max-width: 300px;
         }
 
         .badge-quantite {
             background: #38bdf820;
             color: var(--bleu-flash);
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             font-weight: 700;
         }
@@ -207,19 +218,33 @@
         .badge-temps {
             background: #fb923c20;
             color: var(--orange-badge);
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             font-weight: 700;
         }
 
-        /* Classes pour gérer la couleur du profit (Vert si positif, Rouge si négatif) */
-        .texte-gain {
-            font-weight: 700;
-            color: var(--vert-gain);
-        }
-        .texte-perte {
-            font-weight: 700;
-            color: var(--rouge-perte);
+        .texte-gain { font-weight: 700; color: var(--vert-gain); }
+        .texte-perte { font-weight: 700; color: var(--rouge-perte); }
+
+        /* ================= DESIGN POUR ORDINATEUR (ÉCRANS LARGES) ================= */
+        @media (min-width: 768px) {
+            body { padding: 30px 20px; }
+            .container { padding: 30px; }
+            h1 { font-size: 28px; }
+            
+            .zone-outils {
+                flex-direction: row;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px;
+            }
+            .groupe-saisie { width: auto; }
+            input[type="text"] { width: 220px; }
+            button { width: auto; padding: 11px 28px; }
+            
+            th, td { font-size: 14px; padding: 15px 20px; }
+            .boite-details { padding: 20px; font-size: 14px; }
+            .boite-details h4 { font-size: 16px; }
         }
     </style>
 </head>
@@ -227,7 +252,7 @@
 
     <div class="container">
         <h1>Simulateur de Chantiers</h1>
-        <p class="subtitle">Calculez vos constructions maximales et vos bénéfices réels.</p>
+        <p class="subtitle">Vos constructions maximales et bénéfices réels.</p>
 
         <div class="zone-outils">
             <div class="groupe-saisie">
@@ -247,10 +272,10 @@
             <table id="resultsTable" style="display: none;">
                 <thead>
                     <tr>
-                        <th>Nom du bâtiment (Cliquez)</th>
+                        <th>Bâtiment</th>
                         <th>Type</th>
-                        <th>Prix de revient (1 unité)</th>
-                        <th>Quantité max</th>
+                        <th>Prix revient</th>
+                        <th>Max</th>
                         <th>Bénéfice total</th>
                         <th>Remboursement</th>
                     </tr>
@@ -269,7 +294,6 @@
 
         const formatNumber = (num) => new Intl.NumberFormat('fr-FR').format(Math.round(num));
 
-        // Met des espaces automatiquement pendant la saisie
         document.getElementById('budgetInput').addEventListener('input', function(e) {
             let valeurBrute = e.target.value.replace(/\D/g, '');
             if (valeurBrute === '') { e.target.value = ''; return; }
@@ -351,7 +375,7 @@
                         
                         let moisRemboursementStr = "Loyer nul";
                         if (gainNetMensuel > 0) {
-                            moisRemboursementStr = `${(coutUnitaire / gainNetMensuel).toFixed(1)} mois`;
+                            moisRemboursementStr = `${(coutUnitaire / gainNetMensuel).toFixed(1)} m`;
                         }
 
                         opportunites.push({
@@ -377,7 +401,6 @@
                     }
                 });
 
-                // Tri par profit décroissant
                 opportunites.sort((a, b) => b.gainTotalCumule - a.gainTotalCumule);
 
                 if (opportunites.length === 0) {
@@ -393,7 +416,6 @@
                     const trPrincipal = document.createElement('tr');
                     trPrincipal.className = "ligne-principale";
                     
-                    // CORRECTION ICI : Gestion de la couleur (Vert si positif, Rouge si négatif)
                     const classeCouleur = o.gainTotalCumule >= 0 ? "texte-gain" : "texte-perte";
                     const signe = o.gainTotalCumule >= 0 ? "+" : "";
 
@@ -401,7 +423,7 @@
                         <td class="nom-cliquable" onclick="toggleDetails('${o.idUnique}')">📁 ${o.nom}</td>
                         <td>${o.type}</td>
                         <td>${formatNumber(o.coutUnitaire)} €</td>
-                        <td><span class="badge-quantite">x ${o.quantiteMax}</span></td>
+                        <td><span class="badge-quantite">x${o.quantiteMax}</span></td>
                         <td class="${classeCouleur}">${signe}${formatNumber(o.gainTotalCumule)} €</td>
                         <td><span class="badge-temps">${o.tempsRemboursement}</span></td>
                     `;
@@ -426,7 +448,7 @@
                                     <strong>Modifier le terrain :</strong><br>
                                     <select class="selecteur-terrain" onchange="modifierTerrainDirect('${o.nom.replace(/'/g, "\\'")}', this.value)">
                                         ${optionsHTML}
-                                    </select>
+                                </select>
                                 </div>
                                 
                                 <p>
