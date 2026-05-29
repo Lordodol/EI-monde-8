@@ -382,12 +382,15 @@
         /* Bloc résumé rapide */
         .recap-rapide {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             margin-bottom: 14px;
         }
-        @media (min-width: 600px) {
-            .recap-rapide { grid-template-columns: repeat(4, 1fr); }
+        @media (min-width: 480px) {
+            .recap-rapide { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 700px) {
+            .recap-rapide { grid-template-columns: repeat(6, 1fr); }
         }
         .recap-card {
             background: var(--fond-carte);
@@ -569,11 +572,55 @@
         }
 
         /* ─── Responsive ─── */
+
+        /* Mobile first - everything below is base (mobile) */
+        
+        /* On mobile: hide ROI column, show only key info */
+        .col-roi-mobile { display: none; }
+        
+        /* Reduce padding on small screens */
+        th, td { padding: 9px 8px; }
+
+        /* Table: allow horizontal scroll on very small phones */
+        .conteneur-tableau {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Make table min-width so it doesn't crush too much */
+        #resultsTable { min-width: 280px; }
+
+        /* Badge conseil wraps on mobile */
+        .badge-conseil { 
+            font-size: 9px; 
+            padding: 2px 5px;
+            display: block;
+            margin-top: 3px;
+            width: fit-content;
+        }
+
+        /* Nom cliquable tighter on mobile */
+        .nom-cliquable { font-size: 12px; }
+        .type-sous-titre { font-size: 9px; }
+
+        /* Detail box tighter on mobile */
+        .boite-details { padding: 10px 8px; }
+        .table-details td { font-size: 10px; padding: 7px 8px; }
+        .table-details td:first-child { font-size: 10px; }
+
+        @media (min-width: 480px) {
+            body { padding: 14px 12px; }
+            .col-roi-mobile { display: table-cell; }
+            th, td { padding: 10px 10px; }
+            .nom-cliquable { font-size: 13px; }
+        }
+
         @media (min-width: 600px) {
             body { padding: 20px 16px; }
             .outils-row { flex-direction: row; align-items: flex-end; flex-wrap: wrap; }
             .groupe-saisie { flex: 1; min-width: 150px; }
             .btn-calculer { width: auto; }
+            th, td { font-size: 12px; padding: 11px 12px; }
         }
 
         @media (min-width: 900px) {
@@ -585,6 +632,37 @@
             .table-details td { font-size: 12px; padding: 10px 12px; }
             .table-details td:first-child { font-size: 13px; }
         }
+
+        /* ─── Touch targets ─── */
+        @media (max-width: 600px) {
+            .btn-calculer { 
+                padding: 14px 20px;
+                font-size: 15px;
+                width: 100%;
+            }
+            .groupe-case {
+                padding: 12px 14px;
+            }
+            .groupe-case input[type="checkbox"] {
+                width: 22px;
+                height: 22px;
+            }
+            input[type="text"], .selecteur-strategie {
+                padding: 13px 14px;
+                font-size: 16px; /* Prevent iOS zoom */
+            }
+            .input-filtre input {
+                font-size: 16px; /* Prevent iOS zoom */
+                padding: 13px 14px 13px 38px;
+            }
+            /* Hide performance header text, show icon only on small screens */
+            th .th-label-long { display: none; }
+            th .th-label-short { display: inline; }
+        }
+        @media (min-width: 601px) {
+            th .th-label-long { display: inline; }
+            th .th-label-short { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -594,7 +672,7 @@
     <div class="header">
         <div class="header-tag">EMPIRE IMMO · SIMULATEUR PRO</div>
         <h1>Conseiller <span>Tactique</span></h1>
-        <p class="subtitle">Analyse stratégique avec déficit de chantier · Données en temps réel</p>
+        <p class="subtitle">Analyse stratégique avec déficit de chantier · Classement par gain/jour · Données en temps réel</p>
     </div>
 
     <!-- Zone outils -->
@@ -648,16 +726,24 @@
             <thead>
                 <tr>
                     <th onclick="trierColonne('nom')">
-                        Bâtiment / Plan conseillé <span class="sort-icon" id="sort-nom">⇅</span>
+                        <span class="th-label-long">Bâtiment / Plan conseillé</span>
+                        <span class="th-label-short">Bâtiment</span>
+                        <span class="sort-icon" id="sort-nom">⇅</span>
                     </th>
                     <th onclick="trierColonne('quantite')" style="white-space:nowrap;">
-                        Max <span class="sort-icon" id="sort-quantite">⇅</span>
+                        <span class="th-label-long">Max</span>
+                        <span class="th-label-short">Max</span>
+                        <span class="sort-icon" id="sort-quantite">⇅</span>
                     </th>
                     <th onclick="trierColonne('performance')" style="white-space:nowrap;">
-                        Performance <span class="sort-icon" id="sort-performance">⇅</span>
+                        <span class="th-label-long">Performance</span>
+                        <span class="th-label-short">Perf.</span>
+                        <span class="sort-icon" id="sort-performance">⇅</span>
                     </th>
-                    <th onclick="trierColonne('remboursement')" style="white-space:nowrap;">
-                        ROI (jours) <span class="sort-icon" id="sort-remboursement">⇅</span>
+                    <th onclick="trierColonne('remboursement')" style="white-space:nowrap;" class="col-roi-mobile">
+                        <span class="th-label-long">ROI (jours)</span>
+                        <span class="th-label-short">ROI</span>
+                        <span class="sort-icon" id="sort-remboursement">⇅</span>
                     </th>
                 </tr>
             </thead>
@@ -853,7 +939,8 @@
         quantite:      (a, b) => a.quantiteMax - b.quantiteMax,
         performance:   (a, b) => {
             const strat = document.getElementById('strategieSelect').value;
-            if (strat === 'plusvalue') return a.gainTotalCumule - b.gainTotalCumule;
+            // Pour plusvalue : tri par gain/jour (efficacité temporelle)
+            if (strat === 'plusvalue') return a.gainParJourTotal - b.gainParJourTotal;
             if (strat === 'cashflow') return a.cashflowTotalCumule - b.cashflowTotalCumule;
             return a.joursRemboursementNum - b.joursRemboursementNum;
         },
@@ -898,9 +985,10 @@
 
         let textePerformance = '';
         if (strategieFiltre === 'plusvalue') {
-            const signe  = o.gainTotalCumule >= 0 ? '+' : '';
-            const classe = o.gainTotalCumule >= 0 ? 'texte-gain' : 'texte-perte';
-            textePerformance = `<span class="${classe}">${signe}${formatNumber(o.gainTotalCumule)} €</span><br><span style="font-size:10px;color:var(--texte-gris)">Plus-value nette</span>`;
+            const signe  = o.gainParJourTotal >= 0 ? '+' : '';
+            const classe = o.gainParJourTotal >= 0 ? 'texte-gain' : 'texte-perte';
+            const signeU = o.gainParJourUnitaire >= 0 ? '+' : '';
+            textePerformance = `<span class="${classe}">${signe}${formatNumber(o.gainParJourTotal)} €/j</span><br><span style="font-size:10px;color:var(--texte-gris)">Gain/jour (×cycles)</span>`;
         } else if (strategieFiltre === 'cashflow') {
             const signe  = o.cashflowTotalCumule >= 0 ? '+' : '';
             const classe = o.cashflowTotalCumule >= 0 ? 'texte-gain' : 'texte-perte';
@@ -917,7 +1005,7 @@
             </td>
             <td><span class="badge-quantite">×${o.quantiteMax}</span></td>
             <td>${textePerformance}</td>
-            <td><span class="badge-temps">${o.tempsRemboursement}</span></td>
+            <td class="col-roi-mobile"><span class="badge-temps">${o.tempsRemboursement}</span></td>
         `;
         tbody.appendChild(trPrincipal);
 
@@ -951,7 +1039,7 @@
         trDetails.className = 'ligne-details';
 
         trDetails.innerHTML = `
-        <td colspan="4">
+        <td colspan="4" style="padding:0">
             <div class="boite-details">
                 <h4>📊 FICHE STRATÉGIQUE — ${o.nom}</h4>
 
@@ -972,6 +1060,14 @@
                     <div class="recap-card">
                         <div class="rc-val" style="color:var(--orange-badge)">${o.tempsRemboursement}</div>
                         <div class="rc-label">Seuil ROI</div>
+                    </div>
+                    <div class="recap-card" style="border-color:rgba(52,211,153,0.35)">
+                        <div class="rc-val" style="color:var(--vert-gain)">${signe}${formatNumber(o.gainParJourUnitaire)} €</div>
+                        <div class="rc-label">Gain/jour (1 unité)</div>
+                    </div>
+                    <div class="recap-card" style="border-color:rgba(52,211,153,0.35)">
+                        <div class="rc-val" style="color:var(--vert-gain)">${signe}${formatNumber(o.gainParJourTotal)} €</div>
+                        <div class="rc-label">Gain/jour (×${o.quantiteMax})</div>
                     </div>
                 </div>
 
@@ -1038,6 +1134,16 @@
                             <td>Plus-value nette réelle</td>
                             <td><strong>${signe}${formatNumber(gainUnitaire)} €</strong> <span class="badge-pct">${signe}${o.pcts.margeRevente}%</span></td>
                             <td><strong>${signe}${formatNumber(o.gainTotalCumule)} €</strong></td>
+                        </tr>
+                        <tr class="${classeGain}" style="background:rgba(52,211,153,0.08)">
+                            <td style="color:var(--vert-gain);font-weight:700">⚡ Gain/jour (cycles)</td>
+                            <td style="color:var(--vert-gain);font-weight:700">${signe}${formatNumber(o.gainParJourUnitaire)} €/j <span class="badge-pct">${o.tempsConstruction}</span></td>
+                            <td style="color:var(--vert-gain);font-weight:700">${signe}${formatNumber(o.gainParJourTotal)} €/j</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="explication-formule">
+                                ⚡ Gain/jour = Plus-value (${formatNumber(gainUnitaire)} €) ÷ Durée chantier (${o.tempsConstruction}) — permet de comparer des biens à durées différentes (ex: 19M/6j = 3,2M/j > 23M/12j = 1,9M/j)
+                            </td>
                         </tr>
 
                         <tr class="section-titre"><td colspan="3">3 · OPTION EXPLOITATION LOCATIVE</td></tr>
@@ -1231,6 +1337,13 @@
                     ? ((gainNetLocatif / coutGlobalSecurise) * 100).toFixed(2)
                     : '0.00';
 
+                // Gain par jour = gain unitaire / nb jours de construction (minimum 1 jour)
+                // Cela permet de comparer l'efficacité temporelle : 19M en 6j > 23M en 12j
+                // car en 12j on peut faire 2 cycles de 6j = 38M
+                const dureeEffective = tempsConstJours > 0 ? tempsConstJours : 1;
+                const gainParJourUnitaire = gainUnitaire / dureeEffective;
+                const gainParJourTotal = gainParJourUnitaire * quantiteMax;
+
                 opportunites.push({
                     idUnique: `details-${index}`,
                     nom: b.nom,
@@ -1240,6 +1353,9 @@
                     quantiteMax,
                     gainTotalCumule,
                     cashflowTotalCumule,
+                    gainParJourUnitaire,
+                    gainParJourTotal,
+                    tempsConstJours: dureeEffective,
                     joursRemboursementNum,
                     tempsRemboursement,
                     tempsConstruction: tempsConstJours > 0 ? `${tempsConstJours} jours` : 'Immédiat',
@@ -1255,7 +1371,9 @@
 
             /* -- Tri selon stratégie par défaut -- */
             if (strategie === 'plusvalue')
-                opportunites.sort((a, b) => b.gainTotalCumule - a.gainTotalCumule);
+                // On trie par gain/jour pour favoriser les biens courts à relancer
+                // Ex : 19M en 6j = 38M en 12j > 23M en 12j (un seul cycle)
+                opportunites.sort((a, b) => b.gainParJourTotal - a.gainParJourTotal);
             else if (strategie === 'cashflow')
                 opportunites.sort((a, b) => b.cashflowTotalCumule - a.cashflowTotalCumule);
             else
