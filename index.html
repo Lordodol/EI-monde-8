@@ -54,27 +54,6 @@
             font-size: 14px;
         }
         
-        .zone-config {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .zone-config h3 {
-            margin: 0 0 15px 0;
-            font-size: 16px;
-            color: var(--bleu-flash);
-            text-align: center;
-        }
-
-        .grille-temps {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
         .zone-outils {
             display: flex;
             flex-direction: column;
@@ -115,7 +94,7 @@
             text-transform: uppercase;
         }
         
-        input[type="text"], input[type="number"] {
+        input[type="text"] {
             padding: 12px;
             font-size: 16px;
             background-color: var(--fond-input);
@@ -189,7 +168,7 @@
             color: var(--bleu-flash);
             cursor: pointer;
             font-weight: 600;
-            white-space: normal;
+            white-space: normal; /* Permet au nom de passer à la ligne sur petit écran */
             min-width: 120px;
         }
 
@@ -247,16 +226,12 @@
         .texte-gain { font-weight: 700; color: var(--vert-gain); }
         .texte-perte { font-weight: 700; color: var(--rouge-perte); }
 
+        /* ================= DESIGN POUR ORDINATEUR (ÉCRANS LARGES) ================= */
         @media (min-width: 768px) {
             body { padding: 30px 20px; }
             .container { padding: 30px; }
             h1 { font-size: 28px; }
             
-            .grille-temps {
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-            }
-
             .zone-outils {
                 flex-direction: row;
                 justify-content: center;
@@ -279,20 +254,6 @@
         <h1>Simulateur de Chantiers</h1>
         <p class="subtitle">Vos constructions maximales et bénéfices réels.</p>
 
-        <div class="zone-config">
-            <h3>⏳ Durée des travaux (en heures)</h3>
-            <div class="grille-temps">
-                <div class="groupe-saisie">
-                    <label for="tempsPerso">Bâtiments Personnels</label>
-                    <input type="number" id="tempsPerso" value="24" min="0">
-                </div>
-                <div class="groupe-saisie">
-                    <label for="tempsEntreprise">Bâtiments d'Entreprise</label>
-                    <input type="number" id="tempsEntreprise" value="48" min="0">
-                </div>
-            </div>
-        </div>
-
         <div class="zone-outils">
             <div class="groupe-saisie">
                 <label for="budgetInput">Votre capital disponible (€)</label>
@@ -305,7 +266,7 @@
             <button onclick="analyserStrategieAmortissement(true)">Calculer</button>
         </div>
 
-        <div id="etat-chargement">Entrez votre capital, réglez vos temps de travaux et cliquez sur Calculer.</div>
+        <div id="etat-chargement">Entrez votre capital et cliquez sur Calculer.</div>
 
         <div class="conteneur-tableau">
             <table id="resultsTable" style="display: none;">
@@ -331,7 +292,7 @@
         let dataBuildings = null;
         let choixTerrainsUtilisateur = {}; 
 
-        const formatNumber = (num) => new Intl.NetworkFormat('fr-FR').format(Math.round(num));
+        const formatNumber = (num) => new Intl.NumberFormat('fr-FR').format(Math.round(num));
 
         document.getElementById('budgetInput').addEventListener('input', function(e) {
             let valeurBrute = e.target.value.replace(/\D/g, '');
@@ -354,10 +315,6 @@
             const budget = parseFloat(budgetBrutStr);
             const inclureEntreprise = document.getElementById('entrepriseCheck').checked;
             
-            // Récupération des temps saisis par l'utilisateur
-            const heuresPerso = parseFloat(document.getElementById('tempsPerso').value) || 0;
-            const heuresEntreprise = parseFloat(document.getElementById('tempsEntreprise').value) || 0;
-
             const statusDiv = document.getElementById('etat-chargement');
             const table = document.getElementById('resultsTable');
             const tbody = document.getElementById('resultsBody');
@@ -383,18 +340,10 @@
                 let listeBatiments = [];
                 
                 if (dataBuildings.batiments_perso) {
-                    dataBuildings.batiments_perso.forEach(b => { 
-                        b.categorie = "Perso"; 
-                        b.tempsTravauxUnitaire = heuresPerso; // Application du temps choisi
-                        listeBatiments.push(b); 
-                    });
+                    dataBuildings.batiments_perso.forEach(b => { b.categorie = "Perso"; listeBatiments.push(b); });
                 }
                 if (inclureEntreprise && dataBuildings.batiments_entreprise) {
-                    dataBuildings.batiments_entreprise.forEach(b => { 
-                        b.categorie = "🏢 Entreprise"; 
-                        b.tempsTravauxUnitaire = heuresEntreprise; // Application du temps choisi
-                        listeBatiments.push(b); 
-                    });
+                    dataBuildings.batiments_entreprise.forEach(b => { b.categorie = "🏢 Entreprise"; listeBatiments.push(b); });
                 }
 
                 let opportunites = [];
@@ -429,9 +378,6 @@
                             moisRemboursementStr = `${(coutUnitaire / gainNetMensuel).toFixed(1)} m`;
                         }
 
-                        // Calculs des temps totaux
-                        const tempsTotalSuite = b.tempsTravauxUnitaire * quantiteMax;
-
                         opportunites.push({
                             idUnique: `details-${index}`,
                             nom: b.nom,
@@ -441,8 +387,6 @@
                             gainTotalCumule: gainTotalCumule,
                             tempsRemboursement: moisRemboursementStr,
                             indexTerrainActuel: indexTerrainActuel,
-                            tempsUnitaire: b.tempsTravauxUnitaire,
-                            tempsTotalSuite: tempsTotalSuite,
                             brut: {
                                 terrainNom: terrainApplique.nom,
                                 terrainPrix: prixTerrain,
@@ -528,4 +472,21 @@
                                     • Loyer brut : ${formatNumber(o.brut.loyer)} € / mois<br>
                                     • Charges + Impôts : - (${formatNumber(o.brut.charge)} € + ${formatNumber(o.brut.impot)} €)<br>
                                     ➡️ Loyer net en poche = <strong>${formatNumber(o.brut.gainNetMensuel)} €</strong> / mois.<br>
-                                    ⏱️ Temps de remboursement : ${formatNumber(o.coutUn
+                                    ⏱️ Temps de remboursement : ${formatNumber(o.coutUnitaire)} € (coût) ÷ ${formatNumber(o.brut.gainNetMensuel)} € (loyer) = <strong>${o.tempsRemboursement}</strong>.
+                                </p>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(trDetails);
+                });
+
+                table.style.display = 'table';
+
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerText = "⚠️ Erreur de chargement des données.";
+            }
+        }
+    </script>
+</body>
+</html>
