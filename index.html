@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmpireImmo - Calculateur Mobile & PC</title>
+    <title>EmpireImmo - Simulateur Mobile Pro</title>
     <style>
         :root {
             --fond-sombre: #0f172a;
@@ -16,18 +16,21 @@
             --vert-gain: #4ade80;
             --rouge-perte: #f87171;
             --orange-badge: #fb923c;
+            --violet-badge: #c084fc;
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--fond-sombre);
             color: var(--texte-blanc);
-            margin: 0;
-            padding: 10px;
+            padding: 8px;
+            line-height: 1.4;
         }
 
         .container {
@@ -35,40 +38,40 @@
             max-width: 1200px;
             margin: 0 auto;
             background: var(--fond-carte);
-            padding: 20px 15px;
+            padding: 15px 10px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         h1 {
             text-align: center;
-            margin: 5px 0;
-            font-size: 22px;
+            margin-top: 5px;
+            font-size: 20px;
             color: var(--bleu-flash);
         }
 
         p.subtitle {
             text-align: center;
             color: var(--texte-gris);
-            margin-bottom: 25px;
-            font-size: 14px;
+            margin-bottom: 20px;
+            font-size: 13px;
         }
         
         .zone-outils {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 20px;
             background: #1e293b;
             border: 1px solid #334155;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
         }
 
         .groupe-saisie {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             width: 100%;
         }
 
@@ -78,7 +81,7 @@
             gap: 10px;
             font-weight: 600;
             cursor: pointer;
-            padding: 5px 0;
+            padding: 6px 0;
         }
 
         .groupe-case input {
@@ -92,6 +95,7 @@
             font-weight: 700;
             color: var(--texte-gris);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         input[type="text"] {
@@ -130,9 +134,8 @@
             text-align: center;
             font-weight: 600;
             color: var(--orange-badge);
-            margin-bottom: 20px;
-            font-size: 14px;
-            padding: 0 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
         }
 
         .conteneur-tableau {
@@ -148,16 +151,17 @@
         }
 
         th, td {
-            padding: 12px 10px;
+            padding: 10px 8px;
             border-bottom: 1px solid #334155;
             text-align: left;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         th {
             background-color: #0f172a;
             color: var(--texte-blanc);
             font-weight: 700;
+            white-space: nowrap;
         }
 
         tr.ligne-principale:hover {
@@ -168,8 +172,15 @@
             color: var(--bleu-flash);
             cursor: pointer;
             font-weight: 600;
-            white-space: normal; /* Permet au nom de passer à la ligne sur petit écran */
-            min-width: 120px;
+            font-size: 13px;
+        }
+        
+        .type-sous-titre {
+            display: block;
+            font-size: 10px;
+            color: var(--texte-gris);
+            font-weight: 400;
+            margin-top: 2px;
         }
 
         .ligne-details {
@@ -178,19 +189,17 @@
         }
 
         .boite-details {
-            padding: 15px;
+            padding: 10px 6px;
             border-left: 4px solid var(--bleu-flash);
-            font-size: 13px;
             color: #cbd5e1;
-            white-space: normal;
         }
 
         .boite-details h4 {
-            margin: 0 0 12px 0;
+            margin: 0 0 10px 0;
             color: var(--texte-blanc);
             border-bottom: 1px solid #334155;
             padding-bottom: 6px;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         .selecteur-terrain {
@@ -202,49 +211,118 @@
             color: var(--texte-blanc);
             cursor: pointer;
             outline: none;
-            margin-top: 5px;
+            margin-top: 4px;
             width: 100%;
-            max-width: 300px;
         }
 
         .badge-quantite {
             background: #38bdf820;
             color: var(--bleu-flash);
-            padding: 3px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
             font-weight: 700;
+            white-space: nowrap;
         }
 
         .badge-temps {
             background: #fb923c20;
             color: var(--orange-badge);
-            padding: 3px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
             font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .badge-terrain-auto {
+            background: #c084fc15;
+            color: var(--violet-badge);
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            display: inline-block;
+            font-size: 11px;
         }
 
         .texte-gain { font-weight: 700; color: var(--vert-gain); }
         .texte-perte { font-weight: 700; color: var(--rouge-perte); }
 
-        /* ================= DESIGN POUR ORDINATEUR (ÉCRANS LARGES) ================= */
+        /* Structure du tableau financier de détails */
+        .table-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            background: #0b0f19;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #2d3748;
+        }
+        
+        .table-details th {
+            background-color: #161f30 !important;
+            color: var(--bleu-flash) !important;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 8px;
+            border-bottom: 1px solid #2d3748;
+        }
+        
+        .table-details td {
+            padding: 8px;
+            font-size: 11px;
+            border-bottom: 1px solid #1e293b;
+            color: #e2e8f0;
+        }
+        
+        .table-details .section-titre {
+            background-color: #0f172a;
+            font-weight: 700;
+            color: var(--texte-gris);
+            font-size: 10px;
+        }
+        
+        .table-details .total-brut {
+            background-color: #131c2e;
+            font-weight: 600;
+        }
+        
+        .table-details .gain-sub {
+            background-color: rgba(74, 222, 128, 0.08);
+            color: var(--vert-gain);
+        }
+
+        .table-details .perte-sub {
+            background-color: rgba(248, 113, 113, 0.08);
+            color: var(--rouge-perte);
+        }
+
+        /* ================= AJUSTEMENTS ÉCRANS LARGES (PC / TABLETTES) ================= */
         @media (min-width: 768px) {
-            body { padding: 30px 20px; }
-            .container { padding: 30px; }
-            h1 { font-size: 28px; }
+            body { padding: 25px 15px; }
+            .container { padding: 25px; }
+            h1 { font-size: 26px; }
+            p.subtitle { font-size: 14px; margin-bottom: 25px; }
             
             .zone-outils {
                 flex-direction: row;
                 justify-content: center;
+                align-items: flex-end;
                 gap: 20px;
-                padding: 20px;
+                padding: 15px;
             }
             .groupe-saisie { width: auto; }
             input[type="text"] { width: 220px; }
-            button { width: auto; padding: 11px 28px; }
+            button { width: auto; padding: 12px 30px; }
             
-            th, td { font-size: 14px; padding: 15px 20px; }
-            .boite-details { padding: 20px; font-size: 14px; }
-            .boite-details h4 { font-size: 16px; }
+            th, td { font-size: 14px; padding: 12px 15px; }
+            .nom-cliquable { font-size: 14px; }
+            .type-sous-titre { font-size: 11px; }
+
+            .boite-details { padding: 15px; }
+            .boite-details h4 { font-size: 15px; }
+            .table-details th { font-size: 12px; padding: 10px; }
+            .table-details td { font-size: 13px; padding: 10px 12px; }
+            .table-details .section-titre { font-size: 11px; }
+            .selecteur-terrain { max-width: 350px; }
         }
     </style>
 </head>
@@ -252,7 +330,7 @@
 
     <div class="container">
         <h1>Simulateur de Chantiers</h1>
-        <p class="subtitle">Vos constructions maximales et bénéfices réels.</p>
+        <p class="subtitle">Analyses financières adaptées Mobile & PC.</p>
 
         <div class="zone-outils">
             <div class="groupe-saisie">
@@ -273,8 +351,6 @@
                 <thead>
                     <tr>
                         <th>Bâtiment</th>
-                        <th>Type</th>
-                        <th>Prix revient</th>
                         <th>Max</th>
                         <th>Bénéfice total</th>
                         <th>Remboursement</th>
@@ -288,6 +364,101 @@
     <script>
         const MON_PROXY = 'https://mon-proxy-empire.yangtiradol.workers.dev/?url=';
         const API_BUILDINGS = MON_PROXY + encodeURIComponent('https://monde8.empireimmo.com/api/buildings.json');
+
+        const SPECS_BUILDINGS = {
+            "Chambre seule habitable": {"temps_construction": "", "terrain_necessaire": ""},
+            "Chambre seule non-aménagée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Chambre seule tout confort": {"temps_construction": "", "terrain_necessaire": ""},
+            "Chambre seule équipée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Complexe résidentiel géant habitable": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel géant luxueux": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel géant non-aménagé": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel géant tout confort": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel millenium habitable": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel millenium luxueux": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel millenium non-aménagé": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel millenium tout confort": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel moyen habitable": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel moyen luxueux": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel moyen non-aménagé": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel moyen tout confort": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel palacium habitable": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel palacium luxueux": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel palacium non-aménagé": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel palacium tout confort": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel titanium habitable": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel titanium luxueux": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel titanium non-aménagé": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Complexe résidentiel titanium tout confort": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
+            "Double complexe résidentiel géant habitable": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
+            "Double complexe résidentiel géant luxueux": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
+            "Double complexe résidentiel géant non-aménagé": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
+            "Double complexe résidentiel géant tout confort": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
+            "Grand complexe résidentiel habitable": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
+            "Grand complexe résidentiel luxueux": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
+            "Grand complexe résidentiel non-aménagé": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
+            "Grand complexe résidentiel tout confort": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
+            "Grande maison abandonnée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Grande maison habitable": {"temps_construction": "", "terrain_necessaire": ""},
+            "Grande maison luxueuse": {"temps_construction": "", "terrain_necessaire": ""},
+            "Grande maison équipée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Maison moyenne  abandonnée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Maison moyenne habitable": {"temps_construction": "", "terrain_necessaire": ""},
+            "Maison moyenne luxueuse": {"temps_construction": "", "terrain_necessaire": ""},
+            "Maison moyenne équipée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Petit complexe résidentiel habitable": {"temps_construction": "12", "terrain_necessaire": "Parc"},
+            "Petit complexe résidentiel luxueux": {"temps_construction": "12", "terrain_necessaire": "Parc"},
+            "Petit complexe résidentiel non-aménagé": {"temps_construction": "12", "terrain_necessaire": "Parc"},
+            "Petit complexe résidentiel tout confort": {"temps_construction": "12", "terrain_necessaire": "Parc"},
+            "Petite maison abandonnée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Petite maison habitable": {"temps_construction": "", "terrain_necessaire": ""},
+            "Petite maison luxueuse": {"temps_construction": "", "terrain_necessaire": ""},
+            "Petite maison équipée": {"temps_construction": "", "terrain_necessaire": ""},
+            "Quadruple complexe résidentiel géant habitable": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
+            "Quadruple complexe résidentiel géant luxueux": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
+            "Quadruple complexe résidentiel géant non-aménagé": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
+            "Quadruple complexe résidentiel géant tout confort": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
+            "Res. 12 T2 grand luxe": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 12 T2 habitables": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 12 T2 non-aménagés": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 12 T2 équipés": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 12 chambres habitables": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 12 chambres tout confort": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 12 chambres vides": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 12 chambres équipées": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
+            "Res. 24 T2 grand luxe": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 24 T2 habitables": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 24 T2 non-aménagés": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 24 T2 équipés": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 24 chambres habitables": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 24 chambres tout confort": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 24 chambres vides": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 24 chambres équipées": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 48 T2 grand luxe": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 48 T2 habitables": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 48 T2 non-aménagés": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 48 T2 équipés": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 48 chambres habitables": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 48 chambres tout confort": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 48 chambres vides": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 48 chambres équipées": {"temps_construction": "8", "terrain_necessaire": "Parc"},
+            "Res. 6 T2 grand luxe": {"temps_construction": "2", "terrain_necessaire": "Petit terrain"},
+            "Res. 6 T2 habitables": {"temps_construction": "2", "terrain_necessaire": "Petit terrain"},
+            "Res. 6 T2 non-aménagés": {"temps_construction": "2", "terrain_necessaire": "Petit terrain"},
+            "Res. 6 T2 équipés": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
+            "Res. 6 chambres habitables": {"temps_construction": "", "terrain_necessaire": ""},
+            "Res. 6 chambres tout confort": {"temps_construction": "", "terrain_necessaire": ""},
+            "Res. 6 chambres vides": {"temps_construction": "", "terrain_necessaire": ""},
+            "Res. 6 chambres équipées": {"temps_construction": "", "terrain_necessaire": ""},
+            "T2 simple habitable": {"temps_construction": "", "terrain_necessaire": ""},
+            "T2 simple luxueux": {"temps_construction": "", "terrain_necessaire": ""},
+            "T2 simple non-aménagé": {"temps_construction": "", "terrain_necessaire": ""},
+            "T2 simple équipé": {"temps_construction": "", "terrain_necessaire": ""},
+            "Triple complexe résidentiel géant habitable": {"temps_construction": "64", "terrain_necessaire": "Grand parc"},
+            "Triple complexe résidentiel géant luxueux": {"temps_construction": "64", "terrain_necessaire": "Grand parc"},
+            "Triple complexe résidentiel géant non-aménagé": {"temps_construction": "64", "terrain_necessaire": "Grand parc"},
+            "Triple complexe résidentiel géant tout confort": {"temps_construction": "64", "terrain_necessaire": "Grand parc"}
+        };
 
         let dataBuildings = null;
         let choixTerrainsUtilisateur = {}; 
@@ -325,7 +496,7 @@
             }
 
             if (remettreAzeroStatut) {
-                statusDiv.innerText = "Téléchargement des données...";
+                statusDiv.innerText = "Téléchargement des données en cours...";
             }
             
             tbody.innerHTML = '';
@@ -352,12 +523,27 @@
                     const prixConstruction = parseFloat(b.construction) || 0;
                     if (prixConstruction <= 0) return; 
 
-                    if (choixTerrainsUtilisateur[b.nom] === undefined) {
-                        choixTerrainsUtilisateur[b.nom] = 0; 
+                    const specs = SPECS_BUILDINGS[b.nom] || { temps_construction: "", terrain_necessaire: "" };
+                    let tempsConst = specs.temps_construction || "—";
+                    let terrainReq = specs.terrain_necessaire || "";
+
+                    let terrainApplique = null;
+                    let aBesoinDeSelecteur = true;
+
+                    if (terrainReq && terrainReq.trim() !== "") {
+                        terrainApplique = terrains.find(t => t.nom.toLowerCase().trim() === terrainReq.toLowerCase().trim());
+                        if (terrainApplique) {
+                            aBesoinDeSelecteur = false; 
+                        }
                     }
-                    
-                    const indexTerrainActuel = choixTerrainsUtilisateur[b.nom];
-                    const terrainApplique = terrains[indexTerrainActuel] || terrains[0];
+
+                    if (!terrainApplique) {
+                        if (choixTerrainsUtilisateur[b.nom] === undefined) {
+                            choixTerrainsUtilisateur[b.nom] = 0; 
+                        }
+                        const indexTerrainActuel = choixTerrainsUtilisateur[b.nom];
+                        terrainApplique = terrains[indexTerrainActuel] || terrains[0];
+                    }
 
                     const prixTerrain = parseFloat(terrainApplique.valeur) || 0;
                     const valeurFinale = parseFloat(b.valeur) || 0;
@@ -375,7 +561,7 @@
                         
                         let moisRemboursementStr = "Loyer nul";
                         if (gainNetMensuel > 0) {
-                            moisRemboursementStr = `${(coutUnitaire / gainNetMensuel).toFixed(1)} m`;
+                            moisRemboursementStr = `${(coutUnitaire / gainNetMensuel).toFixed(1)} mois`;
                         }
 
                         opportunites.push({
@@ -386,7 +572,10 @@
                             quantiteMax: quantiteMax,
                             gainTotalCumule: gainTotalCumule,
                             tempsRemboursement: moisRemboursementStr,
-                            indexTerrainActuel: indexTerrainActuel,
+                            tempsConstruction: tempsConst,
+                            terrainNecessaire: terrainReq,
+                            aBesoinDeSelecteur: aBesoinDeSelecteur,
+                            terrainApplique: terrainApplique,
                             brut: {
                                 terrainNom: terrainApplique.nom,
                                 terrainPrix: prixTerrain,
@@ -409,7 +598,7 @@
                 }
 
                 if (remettreAzeroStatut) {
-                    statusDiv.innerText = "Calculs terminés ! Cliquez sur un bâtiment pour voir le détail.";
+                    statusDiv.innerText = "Sélectionnez un bâtiment pour voir sa fiche financière.";
                 }
 
                 opportunites.forEach(o => {
@@ -419,61 +608,88 @@
                     const classeCouleur = o.gainTotalCumule >= 0 ? "texte-gain" : "texte-perte";
                     const signe = o.gainTotalCumule >= 0 ? "+" : "";
 
+                    // Optimisation Mobile : Affichage du type sous le nom (Économise une colonne entière)
                     trPrincipal.innerHTML = `
-                        <td class="nom-cliquable" onclick="toggleDetails('${o.idUnique}')">📁 ${o.nom}</td>
-                        <td>${o.type}</td>
-                        <td>${formatNumber(o.coutUnitaire)} €</td>
+                        <td class="nom-cliquable" onclick="toggleDetails('${o.idUnique}')">
+                            📁 ${o.nom}
+                            <span class="type-sous-titre">${o.type}</span>
+                        </td>
                         <td><span class="badge-quantite">x${o.quantiteMax}</span></td>
                         <td class="${classeCouleur}">${signe}${formatNumber(o.gainTotalCumule)} €</td>
                         <td><span class="badge-temps">${o.tempsRemboursement}</span></td>
                     `;
                     tbody.appendChild(trPrincipal);
 
-                    let optionsHTML = "";
-                    terrains.forEach((t, idx) => {
-                        const selected = idx === o.indexTerrainActuel ? "selected" : "";
-                        optionsHTML += `<option value="${idx}" ${selected}>${t.nom} (${formatNumber(t.valeur)} €)</option>`;
-                    });
+                    let zoneTerrainHTML = "";
+                    if (o.aBesoinDeSelecteur) {
+                        let optionsHTML = "";
+                        terrains.forEach((t, idx) => {
+                            const selected = t.nom === o.terrainApplique.nom ? "selected" : "";
+                            optionsHTML += `<option value="${idx}" ${selected}>${t.nom} (${formatNumber(t.valeur)} €)</option>`;
+                        });
+                        zoneTerrainHTML = `
+                            <div>
+                                <strong>Ajuster la taille du terrain :</strong><br>
+                                <select class="selecteur-terrain" onchange="modifierTerrainDirect('${o.nom.replace(/'/g, "\\'")}', this.value)">
+                                    ${optionsHTML}
+                                </select>
+                            </div>
+                        `;
+                    } else {
+                        zoneTerrainHTML = `
+                            <div>
+                                <span class="badge-terrain-auto">🔒 Terrain obligatoire appliqué : ${o.terrainApplique.nom}</span>
+                            </div>
+                        `;
+                    }
 
                     const trDetails = document.createElement('tr');
                     trDetails.id = o.idUnique;
                     trDetails.className = "ligne-details";
                     
+                    const gainUnitaire = o.gainTotalCumule / o.quantiteMax;
+                    const classeLigneGain = gainUnitaire >= 0 ? "gain-sub" : "perte-sub";
+
+                    // Tableau financier imbriqué : calibré pour ne pas briser l'affichage sur mobile
                     trDetails.innerHTML = `
-                        <td colspan="6">
+                        <td colspan="4">
                             <div class="boite-details">
-                                <h4>📐 CALCULS COMPLETS : ${o.nom}</h4>
+                                <h4>📊 RAPPORT COMPTABLE : ${o.nom}</h4>
                                 
-                                <div style="margin-bottom: 15px;">
-                                    <strong>Modifier le terrain :</strong><br>
-                                    <select class="selecteur-terrain" onchange="modifierTerrainDirect('${o.nom.replace(/'/g, "\\'")}', this.value)">
-                                        ${optionsHTML}
-                                </select>
+                                <div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; background: #0b0f19; padding: 10px; border-radius: 6px; font-size: 11px;">
+                                    <div><strong>Temps de chantier :</strong> ${o.tempsConstruction === "—" ? "Immédiat / Inconnu" : o.tempsConstruction + " jours"}</div>
+                                    ${zoneTerrainHTML}
                                 </div>
-                                
-                                <p>
-                                    <strong>1. Prix de revient (fabrication) :</strong><br>
-                                    • Terrain : ${formatNumber(o.brut.terrainPrix)} € (${o.brut.terrainNom})<br>
-                                    • Chantier : + ${formatNumber(o.brut.construction)} €<br>
-                                    • Taxe fixe : + 1 000 €<br>
-                                    ➡️ Total = <strong>${formatNumber(o.coutUnitaire)} €</strong> par bâtiment.
-                                </p>
-                                
-                                <p>
-                                    <strong>2. Bénéfice (plus-value) :</strong><br>
-                                    • Valeur finale du bien : ${formatNumber(o.brut.valeurFinale)} €<br>
-                                    • Prix de revient : - ${formatNumber(o.coutUnitaire)} €<br>
-                                    ➡️ Bénéfice par unité = <strong>${formatNumber(o.gainTotalCumule / o.quantiteMax)} €</strong>.<br>
-                                    💰 <em>Pour x${o.quantiteMax} unités = <span class="${classeCouleur}">${signe}${formatNumber(o.gainTotalCumule)} €</span> au total.</em>
-                                </p>
-                                
-                                <p>
-                                    <strong>3. Loyer net & Amortissement :</strong><br>
-                                    • Loyer brut : ${formatNumber(o.brut.loyer)} € / mois<br>
-                                    • Charges + Impôts : - (${formatNumber(o.brut.charge)} € + ${formatNumber(o.brut.impot)} €)<br>
-                                    ➡️ Loyer net en poche = <strong>${formatNumber(o.brut.gainNetMensuel)} €</strong> / mois.<br>
-                                    ⏱️ Temps de remboursement : ${formatNumber(o.coutUnitaire)} € (coût) ÷ ${formatNumber(o.brut.gainNetMensuel)} € (loyer) = <strong>${o.tempsRemboursement}</strong>.
-                                </p>
+
+                                <table class="table-details">
+                                    <thead>
+                                        <tr>
+                                            <th>Élément</th>
+                                            <th>À l'unité</th>
+                                            <th>Total (x${o.quantiteMax})</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="section-titre"><td colspan="3">1. Investissement de départ</td></tr>
+                                        <tr><td>Prix du terrain</td><td>${formatNumber(o.brut.terrainPrix)} €</td><td>${formatNumber(o.brut.terrainPrix * o.quantiteMax)} €</td></tr>
+                                        <tr><td>Coût chantier</td><td>${formatNumber(o.brut.construction)} €</td><td>${formatNumber(o.brut.construction * o.quantiteMax)} €</td></tr>
+                                        <tr><td>Taxe fixe</td><td>1 000 €</td><td>${formatNumber(1000 * o.quantiteMax)} €</td></tr>
+                                        <tr class="total-brut"><td>Revient total</td><td><strong>${formatNumber(o.coutUnitaire)} €</strong></td><td><strong>${formatNumber(o.coutUnitaire * o.quantiteMax)} €</strong></td></tr>
+                                        
+                                        <tr class="section-titre"><td colspan="3">2. Estimation Revente</td></tr>
+                                        <tr><td>Valeur finale</td><td>${formatNumber(o.brut.valeurFinale)} €</td><td>${formatNumber(o.brut.valeurFinale * o.quantiteMax)} €</td></tr>
+                                        <tr class="${classeLigneGain}"><td>Plus-value nette</td><td><strong>${signe}${formatNumber(gainUnitaire)} €</strong></td><td><strong>${signe}${formatNumber(o.gainTotalCumule)} €</strong></td></tr>
+                                        
+                                        <tr class="section-titre"><td colspan="3">3. Rendement Locatif Mensuel</td></tr>
+                                        <tr><td>Loyer Brut</td><td>${formatNumber(o.brut.loyer)} €</td><td>${formatNumber(o.brut.loyer * o.quantiteMax)} €</td></tr>
+                                        <tr><td>Charges</td><td>- ${formatNumber(o.brut.charge)} €</td><td>- ${formatNumber(o.brut.charge * o.quantiteMax)} €</td></tr>
+                                        <tr><td>Impôts</td><td>- ${formatNumber(o.brut.impot)} €</td><td>- ${formatNumber(o.brut.impot * o.quantiteMax)} €</td></tr>
+                                        <tr class="total-brut"><td>Cashflow Net</td><td><span class="texte-gain">${formatNumber(o.brut.gainNetMensuel)} €/m</span></td><td><span class="texte-gain">${formatNumber(o.brut.gainNetMensuel * o.quantiteMax)} €/m</span></td></tr>
+                                        
+                                        <tr class="section-titre"><td colspan="3">4. Amortissement</td></tr>
+                                        <tr><td>Seuil de rentabilité</td><td colspan="2" style="text-align: center; font-weight: 800; color: var(--orange-badge); font-size: 13px;">${o.tempsRemboursement}</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </td>
                     `;
@@ -484,7 +700,7 @@
 
             } catch (error) {
                 console.error(error);
-                statusDiv.innerText = "⚠️ Erreur de chargement des données.";
+                statusDiv.innerText = "⚠️ Erreur lors de la mise à jour des calculs.";
             }
         }
     </script>
