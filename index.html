@@ -7,6 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Familjen+Grotesk:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        /* ══════════════════════════════════════════════
+           TOKENS
+        ══════════════════════════════════════════════ */
         :root {
             --bg:          #F5F3EE;
             --bg2:         #FFFFFF;
@@ -32,14 +35,13 @@
             --orange-dim:  rgba(217,119,6,0.10);
             --violet:      #7C3AED;
             --violet-dim:  rgba(124,58,237,0.10);
-            --teal:        #0D9488;
-            --teal-dim:    rgba(13,148,136,0.10);
             --r:           16px;
             --r-sm:        10px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
+
         body {
             font-family: 'Lexend', sans-serif;
             background: var(--bg);
@@ -50,106 +52,131 @@
         }
 
         /* ══════════════════════════════════════════════
-           HEADER COMPACT — 2 LIGNES MAX
+           HEADER
         ══════════════════════════════════════════════ */
         .header {
             background: var(--panel-dark);
+            padding: 18px 18px 0;
             position: sticky;
             top: 0;
             z-index: 10;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-
-        /* Ligne 1 : logo + onglets */
-        .header-row1 {
+        .header-top {
             display: flex;
-            align-items: center;
-            gap: 0;
-            padding: 0 14px;
-            height: 48px;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 18px;
         }
-        .logo {
+        .header-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 400;
+            color: var(--text-inv2);
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+        .header-pill::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: #4ADE80;
+            border-radius: 50%;
+            animation: blink 2s ease infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+        h1 {
             font-family: 'Familjen Grotesk', sans-serif;
-            font-size: 15px;
+            font-size: clamp(24px, 6.5vw, 34px);
             font-weight: 700;
             color: var(--text-inv);
-            letter-spacing: -0.3px;
-            white-space: nowrap;
-            margin-right: 14px;
+            letter-spacing: -0.5px;
+            line-height: 1.05;
+        }
+        h1 em { font-style: italic; color: rgba(255,255,255,0.45); }
+        .subtitle {
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--text-inv2);
+            margin-top: 5px;
+            letter-spacing: 0.2px;
+        }
+        .header-icon {
+            font-size: 36px;
+            line-height: 1;
             flex-shrink: 0;
+            opacity: 0.25;
+            margin-top: 4px;
         }
-        .logo em { font-style: italic; color: rgba(255,255,255,0.4); }
 
-        .tabs {
+        /* Tab strip at bottom of header */
+        .header-tabs {
             display: flex;
-            flex: 1;
-            height: 100%;
-            gap: 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin: 0 -18px;
         }
-        .tab-btn {
+        .header-tab {
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
+            padding: 11px 4px;
+            text-align: center;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-inv2);
             cursor: pointer;
-            border: none;
-            background: none;
-            font-family: 'Lexend', sans-serif;
-            letter-spacing: 0.2px;
-            padding: 0 6px;
-            position: relative;
-            transition: color 0.18s;
-            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
         }
-        .tab-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 8px; right: 8px;
-            height: 2px;
-            border-radius: 2px 2px 0 0;
-            background: transparent;
-            transition: background 0.18s;
+        .header-tab.active {
+            color: var(--text-inv);
+            border-bottom-color: #60A5FA;
         }
-        .tab-btn.active { color: #fff; }
-        .tab-btn.active::after { background: #60A5FA; }
-        .tab-icon { font-size: 13px; }
 
-        /* Ligne 2 : config compacte */
-        .config-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 14px 10px;
+        /* ══════════════════════════════════════════════
+           PANNEAU CONFIG (dark inverted)
+        ══════════════════════════════════════════════ */
+        .panel-config {
+            padding: 16px 18px 18px;
             background: var(--panel-dark2);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .cfg-field {
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .config-grid .full { grid-column: 1 / -1; }
+
+        .field {
             display: flex;
             flex-direction: column;
-            gap: 2px;
-            flex: 2;
+            gap: 5px;
         }
-        .cfg-field.narrow { flex: 1.2; }
-        .cfg-label {
-            font-size: 9px;
+        .field label {
+            font-size: 10px;
             font-weight: 700;
             color: var(--text-inv2);
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding-left: 2px;
+            letter-spacing: 1px;
         }
+
         input[type="text"], select {
             width: 100%;
-            padding: 8px 10px;
-            font-size: 14px;
+            padding: 12px 14px;
+            font-size: 16px;
             font-family: 'DM Mono', monospace;
             font-weight: 500;
             background: var(--input-dark);
             border: 1.5px solid rgba(255,255,255,0.10);
-            border-radius: 8px;
+            border-radius: var(--r-sm);
             color: #FFFFFF;
             outline: none;
             -webkit-appearance: none;
@@ -162,106 +189,175 @@
             box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
         }
         select option { background: #1C2340; color: #fff; }
+
         .select-wrap { position: relative; }
         .select-wrap::after {
             content: '▾';
             position: absolute;
-            right: 10px; top: 50%;
+            right: 13px;
+            top: 50%;
             transform: translateY(-50%);
             color: rgba(255,255,255,0.35);
             pointer-events: none;
-            font-size: 12px;
+            font-size: 14px;
         }
-        .select-wrap select { padding-right: 28px; cursor: pointer; font-family: 'Lexend', sans-serif; font-size: 12px; font-weight: 600; }
-
-        /* Toggle compact */
-        .toggle-compact {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        .toggle-compact-label {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--text-inv2);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-        .toggle-switch-sm {
-            width: 38px; height: 22px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 11px;
-            position: relative;
+        .select-wrap select {
+            padding-right: 36px;
             cursor: pointer;
+            font-family: 'Lexend', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Toggle entreprise */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--input-dark);
+            border: 1.5px solid rgba(255,255,255,0.10);
+            border-radius: var(--r-sm);
+            padding: 11px 14px;
+            cursor: pointer;
+            user-select: none;
+            gap: 10px;
+            min-height: 50px;
+            transition: border-color 0.18s;
+        }
+        .toggle-row:active { opacity: 0.8; }
+        .toggle-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+        .toggle-text small {
+            display: block;
+            font-size: 10px;
+            font-weight: 300;
+            color: var(--text-inv2);
+            margin-top: 1px;
+        }
+        .toggle-switch {
+            width: 46px;
+            height: 26px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 13px;
+            position: relative;
+            flex-shrink: 0;
             transition: background 0.22s;
         }
-        .toggle-switch-sm::after {
+        .toggle-switch::after {
             content: '';
             position: absolute;
-            width: 16px; height: 16px;
+            width: 20px;
+            height: 20px;
             background: white;
             border-radius: 50%;
-            top: 3px; left: 3px;
+            top: 3px;
+            left: 3px;
             transition: transform 0.22s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
         }
-        .toggle-switch-sm.on { background: #3B82F6; }
-        .toggle-switch-sm.on::after { transform: translateX(16px); }
+        #entrepriseCheck:checked ~ .toggle-row .toggle-switch,
+        .toggle-switch.on { background: #3B82F6; }
+        .toggle-switch.on::after { transform: translateX(20px); }
 
-        /* Bouton analyser compact */
+        /* Bouton calculer */
         .btn-calc {
-            height: 38px;
-            padding: 0 14px;
-            font-size: 13px;
+            width: 100%;
+            padding: 15px;
+            font-size: 15px;
             font-weight: 700;
             font-family: 'Lexend', sans-serif;
             background: #3B82F6;
             color: #FFFFFF;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--r-sm);
             cursor: pointer;
             letter-spacing: 0.3px;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            gap: 8px;
+            min-height: 52px;
         }
-        .btn-calc:active { transform: scale(0.96); opacity: 0.9; }
+        .btn-calc:active { transform: scale(0.97); opacity: 0.9; }
         .btn-calc .spinner-btn {
             display: none;
-            width: 14px; height: 14px;
+            width: 18px; height: 18px;
             border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
+            border-top-color: #FFFFFF;
             border-radius: 50%;
             animation: spin 0.65s linear infinite;
         }
         .btn-calc.loading .spinner-btn { display: block; }
         .btn-calc.loading .btn-text { display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+        /* ══════════════════════════════════════════════
+           BARRE RÉSULTATS / FILTRE
+        ══════════════════════════════════════════════ */
+        .bar-results {
+            display: none;
+            padding: 10px 14px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            gap: 10px;
+            align-items: center;
+        }
+        .bar-results.visible { display: flex; }
+        .bar-results .search-wrap {
+            flex: 1;
+            position: relative;
+        }
+        .bar-results .search-wrap::before {
+            content: '⌕';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            font-size: 18px;
+            pointer-events: none;
+        }
+        .bar-results input {
+            padding: 9px 12px 9px 36px;
+            font-size: 14px;
+            font-family: 'Lexend', sans-serif;
+            background: var(--bg3);
+            color: var(--text);
+            border-color: var(--border);
+            border-radius: 24px;
+        }
+        .bar-results input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
+        .cpt-results {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--text-2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .cpt-results b { color: var(--blue); }
 
         /* ══════════════════════════════════════════════
            STATUS
         ══════════════════════════════════════════════ */
         .status-bar {
             text-align: center;
-            padding: 10px 16px;
+            padding: 12px 16px;
             font-size: 12px;
+            font-weight: 400;
             color: var(--text-2);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            min-height: 38px;
+            min-height: 44px;
         }
         .spinner {
             display: none;
-            width: 14px; height: 14px;
+            width: 16px; height: 16px;
             border: 2px solid var(--border);
             border-top-color: var(--blue);
             border-radius: 50%;
@@ -271,45 +367,13 @@
         .spinner.on { display: block; }
 
         /* ══════════════════════════════════════════════
-           BARRE RÉSULTATS + TRI
+           TRI
         ══════════════════════════════════════════════ */
-        .bar-results {
-            display: none;
-            padding: 8px 14px;
-            background: var(--bg2);
-            border-bottom: 1px solid var(--border);
-            gap: 8px;
-            align-items: center;
-        }
-        .bar-results.visible { display: flex; }
-        .bar-results .search-wrap { flex: 1; position: relative; }
-        .bar-results .search-wrap::before {
-            content: '⌕';
-            position: absolute; left: 10px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-3); font-size: 16px; pointer-events: none;
-        }
-        .bar-results input {
-            padding: 7px 10px 7px 30px;
-            font-size: 13px;
-            font-family: 'Lexend', sans-serif;
-            background: var(--bg3);
-            color: var(--text);
-            border-color: var(--border);
-            border-radius: 20px;
-        }
-        .bar-results input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
-        .cpt-results {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: var(--text-2);
-            white-space: nowrap; flex-shrink: 0;
-        }
-        .cpt-results b { color: var(--blue); }
-
+        .sort-btn { background: none; border: none; cursor: pointer; color: var(--text-2); padding: 0; font-family: inherit; font-size: inherit; display: inline-flex; align-items: center; gap: 4px; }
+        .sort-btn.active { color: var(--blue); }
         .sort-bar {
             display: none;
-            padding: 7px 14px;
+            padding: 8px 14px;
             gap: 6px;
             flex-wrap: wrap;
             border-bottom: 1px solid var(--border);
@@ -317,109 +381,207 @@
             align-items: center;
         }
         .sort-bar.visible { display: flex; }
-        .sort-bar-label { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; }
-        .sort-pill {
-            font-size: 11px; font-weight: 600;
-            padding: 5px 12px;
-            border-radius: 20px; cursor: pointer;
-            border: 1.5px solid var(--border);
-            background: var(--bg); color: var(--text-2);
-            transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+        .sort-bar-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
-        .sort-pill.active { background: var(--blue-dim); border-color: rgba(37,99,235,0.3); color: var(--blue); }
+        .sort-pill {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 13px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            color: var(--text-2);
+            transition: all 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sort-pill.active {
+            background: var(--blue-dim);
+            border-color: rgba(37,99,235,0.3);
+            color: var(--blue);
+        }
 
         /* ══════════════════════════════════════════════
            CARDS LISTE
         ══════════════════════════════════════════════ */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .cards-list { padding: 10px 14px 100px; }
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-3); font-size: 13px; line-height: 2; }
+        .cards-list {
+            padding: 10px 14px 100px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-3);
+            font-size: 13px;
+            line-height: 2;
+        }
 
         .rank-sep {
-            display: flex; align-items: center; gap: 10px;
-            padding: 14px 2px 7px;
-            font-size: 11px; font-weight: 700; color: var(--text-2);
-            text-transform: uppercase; letter-spacing: 0.6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 2px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
         }
         .rank-sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
+        /* Card principale */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-left: 4px solid var(--border);
             border-radius: var(--r);
-            margin-bottom: 9px;
+            margin-bottom: 10px;
             overflow: hidden;
             cursor: pointer;
-            transition: box-shadow 0.18s, border-color 0.18s;
+            transition: transform 0.12s, box-shadow 0.18s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             -webkit-tap-highlight-color: transparent;
         }
-        .card:active { opacity: 0.85; }
-        .card.c-green { border-left-color: var(--green); }
-        .card.c-blue  { border-left-color: var(--blue); }
-        .card.c-orange{ border-left-color: var(--orange); }
-        .card.c-violet{ border-left-color: var(--violet); }
-        .card.c-red   { border-left-color: var(--red); }
-        .card.c-teal  { border-left-color: var(--teal); }
-        .card-top { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .card:active { transform: scale(0.985); box-shadow: none; }
+
+        /* Couleur de bordure gauche selon recommandation */
+        .card:has(.card-badge.c-green)  { border-left-color: var(--green); }
+        .card:has(.card-badge.c-blue)   { border-left-color: var(--blue); }
+        .card:has(.card-badge.c-orange) { border-left-color: var(--orange); }
+        .card:has(.card-badge.c-violet) { border-left-color: var(--violet); }
+        .card:has(.card-badge.c-red)    { border-left-color: var(--red); }
 
         .card-main {
-            padding: 12px 13px 11px 13px;
+            padding: 14px 14px 12px 14px;
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 4px 10px;
             align-items: start;
             position: relative;
         }
-        .card-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.25; word-break: break-word; }
-        .card-type { font-size: 10px; font-weight: 400; color: var(--text-3); margin-top: 2px; }
-        .card-badge {
-            display: inline-flex; align-items: center; gap: 4px;
-            font-size: 10px; font-weight: 700; padding: 4px 9px;
-            border-radius: 20px; white-space: nowrap;
+
+        .card-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.25;
+            word-break: break-word;
         }
+        .card-type {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-3);
+            margin-top: 3px;
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
         .card-metrics {
             grid-column: 1 / -1;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 5px; margin-top: 9px;
-            padding-top: 10px; border-top: 1px solid var(--border);
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 11px;
+            border-top: 1px solid var(--border);
         }
         .metric-chip {
-            display: flex; flex-direction: column; align-items: center;
-            background: var(--bg); border-radius: 8px;
-            padding: 7px 3px; gap: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 8px 4px;
+            gap: 3px;
         }
         .metric-chip .val {
             font-family: 'DM Mono', monospace;
-            font-size: 11px; font-weight: 500; color: var(--text);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text);
             white-space: nowrap;
         }
         .metric-chip .lbl {
-            font-size: 9px; font-weight: 700; color: var(--text-3);
-            text-transform: uppercase; letter-spacing: 0.2px;
-            text-align: center; line-height: 1.2;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            text-align: center;
+            line-height: 1.2;
         }
-        .card-name-row {
-            grid-column: 1 / -1;
-            display: flex; align-items: flex-start;
-            justify-content: space-between; gap: 10px;
+
+        .card-tap-hint {
+            text-align: center;
+            padding: 7px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-3);
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Séparateur rang */
+        .rank-sep::before { display: none; }
+
+        /* TOP 3 */
+        .card-top {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
         }
         .top-rank {
-            position: absolute; top: 0; right: 13px;
-            font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
-            background: var(--panel-dark); color: rgba(255,255,255,0.75);
-            padding: 2px 9px; border-radius: 0 0 7px 7px;
+            position: absolute;
+            top: 0; right: 14px;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            background: var(--panel-dark);
+            color: rgba(255,255,255,0.75);
+            padding: 3px 10px;
+            border-radius: 0 0 8px 8px;
         }
+
+        .card-name-row {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        /* Bouton pertes sèches */
         .btn-toggle-pertes {
-            width: 100%; padding: 11px; font-size: 12px; font-weight: 600;
-            font-family: 'Lexend', sans-serif; color: var(--text-3);
-            background: var(--bg2); border: 1.5px dashed var(--border);
-            border-radius: var(--r-sm); cursor: pointer; margin-bottom: 8px;
+            width: 100%;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Lexend', sans-serif;
+            color: var(--text-3);
+            background: var(--bg2);
+            border: 1.5px dashed var(--border);
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            margin-bottom: 10px;
             transition: all 0.15s;
         }
+        .btn-toggle-pertes:active { color: var(--text-2); }
+
+        .rank-sep-loss::after { display: none; }
+        .rank-sep-loss::before { display: none; }
 
         /* ══════════════════════════════════════════════
            COULEURS SÉMANTIQUES
@@ -429,76 +591,18 @@
         .c-orange { background: var(--orange-dim); color: var(--orange); }
         .c-violet { background: var(--violet-dim); color: var(--violet); }
         .c-red    { background: var(--red-dim);    color: var(--red); }
-        .c-teal   { background: var(--teal-dim);   color: var(--teal); }
         .t-green  { color: var(--green); }
         .t-red    { color: var(--red); }
         .t-blue   { color: var(--blue); }
         .t-orange { color: var(--orange); }
-        .t-teal   { color: var(--teal); }
-        .t-violet { color: var(--violet); }
-
-        /* ══════════════════════════════════════════════
-           ONGLET 3 — COMPARATIF
-        ══════════════════════════════════════════════ */
-        .cmp-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            margin-bottom: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .cmp-card:active { opacity: 0.85; }
-        .cmp-header {
-            padding: 11px 13px 9px;
-            display: flex; align-items: flex-start;
-            justify-content: space-between; gap: 10px;
-        }
-        .cmp-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
-        .cmp-sub  { font-size: 10px; color: var(--text-3); margin-top: 2px; }
-        .verdict-badge {
-            display: inline-flex; align-items: center; gap: 4px;
-            font-size: 10px; font-weight: 700; padding: 4px 9px;
-            border-radius: 20px; white-space: nowrap; flex-shrink: 0;
-        }
-        .cmp-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            border-top: 1px solid var(--border);
-        }
-        .cmp-col {
-            padding: 10px 12px 12px;
-        }
-        .cmp-col:first-child { border-right: 1px solid var(--border); }
-        .cmp-col-title {
-            font-size: 9px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.8px; color: var(--text-3);
-            margin-bottom: 8px; display: flex; align-items: center; gap: 4px;
-        }
-        .cmp-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 4px 0; border-bottom: 1px solid var(--bg3); gap: 8px;
-        }
-        .cmp-row:last-child { border-bottom: none; }
-        .cmp-row-lbl { font-size: 10px; color: var(--text-2); }
-        .cmp-row-val { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text); }
-        .cmp-winner {
-            background: var(--green-dim);
-            position: relative;
-        }
-        .cmp-winner::before {
-            content: '★';
-            position: absolute; top: 8px; right: 8px;
-            font-size: 10px; color: var(--green);
-        }
 
         /* ══════════════════════════════════════════════
            MODAL FICHE
         ══════════════════════════════════════════════ */
         .modal-overlay {
             display: none;
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: rgba(10,15,35,0.6);
             z-index: 100;
             backdrop-filter: blur(6px);
@@ -510,9 +614,12 @@
         .modal {
             background: var(--bg);
             border-radius: 22px 22px 0 0;
-            width: 100%; max-width: 560px;
+            width: 100%;
+            max-width: 560px;
             max-height: 92dvh;
-            display: flex; flex-direction: column; overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
             box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
         }
@@ -521,199 +628,381 @@
             from { transform: translateY(40px); opacity: 0; }
             to   { transform: translateY(0);    opacity: 1; }
         }
-        .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 0; flex-shrink: 0; }
+
+        .modal-handle {
+            width: 40px; height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 12px auto 0;
+            flex-shrink: 0;
+        }
+
         .modal-header {
-            padding: 12px 16px 12px;
+            padding: 14px 18px 14px;
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
-            display: flex; align-items: flex-start; gap: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
             background: var(--bg2);
         }
         .modal-header-info { flex: 1; min-width: 0; }
-        .modal-title { font-family: 'Familjen Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.2; word-break: break-word; }
-        .modal-subtitle { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-2); margin-top: 3px; }
+        .modal-title {
+            font-family: 'Familjen Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+            word-break: break-word;
+        }
+        .modal-subtitle {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-2);
+            margin-top: 4px;
+        }
         .modal-close {
-            width: 32px; height: 32px; background: var(--bg3);
-            border: 1px solid var(--border); border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            color: var(--text-2); font-size: 18px; flex-shrink: 0; line-height: 1;
+            width: 36px; height: 36px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-2);
+            font-size: 20px;
+            flex-shrink: 0;
+            line-height: 1;
             transition: background 0.15s;
         }
         .modal-close:active { background: var(--border); }
-        .modal-body { overflow-y: auto; flex: 1; padding: 14px 14px 26px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 
-        .section { margin-bottom: 18px; }
-        .section-title {
-            font-size: 10px; font-weight: 700; color: var(--text-3);
-            text-transform: uppercase; letter-spacing: 1px;
-            padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 11px;
+        .modal-body {
+            overflow-y: auto;
+            flex: 1;
+            padding: 16px 16px 28px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .kpi { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 11px 12px; }
-        .kpi-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text); }
-        .kpi-lbl { font-size: 10px; color: var(--text-3); margin-top: 3px; }
 
-        .reco-block { padding: 12px 14px; border-radius: var(--r-sm); margin-bottom: 14px; }
-        .reco-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
-        .reco-desc { font-size: 12px; line-height: 1.6; }
+        /* Sections dans la modale */
+        .section { margin-bottom: 20px; }
+        .section-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
 
-        .roi-bar-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 14px; }
-        .roi-bar-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
+        /* Bloc recommandation */
+        .reco-block {
+            border-radius: var(--r-sm);
+            padding: 14px 15px;
+            margin-bottom: 18px;
+            border-left: 4px solid transparent;
+        }
+        .reco-block.c-green  { border-left-color: var(--green);  }
+        .reco-block.c-blue   { border-left-color: var(--blue);   }
+        .reco-block.c-orange { border-left-color: var(--orange); }
+        .reco-block.c-violet { border-left-color: var(--violet); }
+        .reco-block.c-red    { border-left-color: var(--red);    }
+
+        .reco-title {
+            font-family: 'Familjen Grotesk', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 7px;
+            color: var(--text);
+        }
+        .reco-desc {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.65;
+        }
+        .reco-desc strong { color: var(--text); font-weight: 700; }
+
+        /* KPI grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .kpi {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 13px 12px;
+        }
+        .kpi .kpi-val {
+            font-family: 'DM Mono', monospace;
+            font-size: 17px;
+            font-weight: 500;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .kpi .kpi-lbl {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        /* Tableau financier */
+        .fin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            overflow: hidden;
+        }
+        .fin-table thead th {
+            background: var(--panel-dark);
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 10px 11px;
+            text-align: left;
+        }
+        .fin-table tbody tr { border-bottom: 1px solid var(--border); }
+        .fin-table tbody tr:last-child { border-bottom: none; }
+        .fin-table td { padding: 10px 11px; vertical-align: middle; }
+        .fin-table td:not(:first-child) {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: right;
+        }
+        .fin-table td:first-child { color: var(--text-2); font-size: 13px; }
+        .fin-table .tr-section td {
+            background: var(--bg3);
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 7px 11px;
+        }
+        .fin-table .tr-total td { background: var(--bg3); font-weight: 700; }
+        .fin-table .tr-total td:first-child { color: var(--text); }
+        .fin-table .tr-gain { background: rgba(5,150,105,0.04); }
+        .fin-table .tr-loss { background: rgba(220,38,38,0.04); }
+        .fin-table .tr-note td {
+            font-size: 11px;
+            color: var(--text-3);
+            font-style: italic;
+            text-align: center;
+            background: var(--bg);
+        }
+
+        /* Terrain dans modale */
+        .terrain-block {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 13px;
+            margin-bottom: 14px;
+        }
+        .terrain-block label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-2);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .badge-terrain-fixe {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--violet-dim);
+            color: var(--violet);
+            border: 1px solid rgba(124,58,237,0.15);
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        /* Barre ROI */
+        .roi-bar-wrap {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 14px;
+            margin-bottom: 8px;
+        }
+        .roi-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
         .roi-bar-label .name { color: var(--text-2); }
-        .roi-bar-label .val  { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text); }
-        .roi-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-        .roi-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), #34D399); border-radius: 3px; transition: width 0.5s ease; }
-        .roi-formula { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); text-align: right; }
+        .roi-bar-label .val { color: var(--orange); font-family: 'DM Mono', monospace; }
+        .roi-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .roi-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--blue));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .roi-formula {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-3);
+            text-align: center;
+            margin-top: 10px;
+        }
 
-        .fin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        .fin-table th { padding: 7px 8px; background: var(--bg3); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-2); text-align: left; }
-        .fin-table th:not(:first-child) { text-align: right; }
-        .fin-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); color: var(--text-2); }
-        .fin-table td:not(:first-child) { text-align: right; font-family: 'DM Mono', monospace; }
-        .th-pct { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 400; color: var(--text-3); }
-        .pct-badge { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-3); }
-        .tr-section td { background: var(--bg); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding: 8px 8px 5px; }
-        .tr-total td { font-weight: 700; color: var(--text); background: var(--bg2); border-top: 1px solid var(--border); }
-        .tr-gain td { background: var(--green-dim); }
-        .tr-loss td { background: var(--red-dim); }
-        .tr-note td { font-size: 10px; font-style: italic; color: var(--text-3); padding: 5px 8px; }
-        .fin-legend { font-size: 10px; color: var(--text-3); margin-top: 6px; text-align: right; }
+        /* % badges */
+        .pct-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--text-3);
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .th-pct {
+            font-size: 9px; opacity: 0.6; font-weight: 400;
+            margin-left: 3px; letter-spacing: 0; text-transform: none;
+        }
+        .fin-legend {
+            font-size: 10px;
+            color: var(--text-3);
+            text-align: center;
+            padding: 8px 10px;
+            font-style: italic;
+        }
 
-        .terrain-block { margin-bottom: 12px; }
-        .terrain-block label { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 6px; }
-        .badge-terrain-fixe { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text-2); font-family: 'DM Mono', monospace; }
-
+        /* ══════════════════════════════════════════════
+           ANIMATION ENTRÉE CARDS
+        ══════════════════════════════════════════════ */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(10px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .card, .cmp-card { animation: fadeInUp 0.22s ease both; }
+        .card { animation: fadeInUp 0.22s ease both; }
 
+        /* ══════════════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════════════ */
         @media (min-width: 540px) {
+            .config-grid { grid-template-columns: 1fr 1fr 1fr; }
+            .config-grid .full { grid-column: 1 / -1; }
             .kpi-grid { grid-template-columns: repeat(4, 1fr); }
-            .card-metrics { grid-template-columns: repeat(4, 1fr); }
         }
         @media (min-width: 900px) {
-            .header-row1 { padding: 0 20px; }
-            .config-bar { padding: 8px 20px 10px; gap: 12px; }
+            .header { padding: 24px 24px 0; }
+            .panel-config { padding: 20px 24px 22px; }
             .cards-list { padding: 10px 20px 80px; }
+            .modal-body { padding: 20px 22px 32px; }
         }
+
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
             .cards-list { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
             .modal { padding-bottom: env(safe-area-inset-bottom); }
         }
+
+        .highlight { box-shadow: 0 0 0 2px var(--blue-dim); }
     </style>
 </head>
 <body>
 
-<!-- ══ HEADER COMPACT ══ -->
+<!-- HEADER -->
 <div class="header">
-    <div class="header-row1">
-        <div class="logo">Empire<em>Immo</em></div>
-        <div class="tabs">
-            <button class="tab-btn active" id="tab-btn-1" onclick="switchTab(1)">
-                <span class="tab-icon">🏗️</span> Construire
-            </button>
-            <button class="tab-btn" id="tab-btn-2" onclick="switchTab(2)">
-                <span class="tab-icon">🏠</span> Acheter & Louer
-            </button>
-            <button class="tab-btn" id="tab-btn-3" onclick="switchTab(3)">
-                <span class="tab-icon">⚖️</span> Comparatif
-            </button>
+    <div class="header-top">
+        <div>
+            <div class="header-pill">Empire Immo · Simulateur Pro</div>
         </div>
     </div>
-    <div class="config-bar">
-        <div class="cfg-field">
-            <div class="cfg-label">Capital (€)</div>
+</div>
+
+<!-- CONFIG -->
+<div class="panel-config">
+    <div class="config-grid">
+        <div class="field">
+            <label for="budgetInput">Capital (€)</label>
             <input type="text" id="budgetInput" value="1 000 000" inputmode="numeric" autocomplete="off">
         </div>
-        <div class="cfg-field narrow" id="objectifField">
-            <div class="cfg-label">Objectif</div>
+
+        <div class="field">
+            <label for="strategieSelect">Objectif</label>
             <div class="select-wrap">
                 <select id="strategieSelect" onchange="relancer()">
                     <option value="plusvalue">🚀 Plus-value</option>
-                    <option value="cashflow">💰 Rente</option>
-                    <option value="roi">⏱️ ROI</option>
+                    <option value="cashflow">💰 Rente nette</option>
+                    <option value="roi">⏱️ ROI rapide</option>
                 </select>
             </div>
         </div>
-        <div class="toggle-compact">
-            <div class="toggle-compact-label">Ent.</div>
-            <div class="toggle-switch-sm on" id="toggleSwitch" onclick="toggleEntreprises()"></div>
-            <input type="checkbox" id="entrepriseCheck" checked style="display:none">
+
+        <div class="field">
+            <label>&nbsp;</label>
+            <label class="toggle-row" for="entrepriseCheck" id="toggleLabel">
+                <div>
+                    <span class="toggle-text">Entreprises</span>
+                </div>
+                <input type="checkbox" id="entrepriseCheck" checked style="display:none" onchange="relancer()">
+                <div class="toggle-switch on" id="toggleSwitch"></div>
+            </label>
         </div>
-        <button class="btn-calc" id="btnCalc" onclick="analyser(true)">
-            <span class="btn-text">→</span>
-            <div class="spinner-btn"></div>
-        </button>
+
+        <div class="field full">
+            <button class="btn-calc" id="btnCalc" onclick="analyser(true)">
+                <span class="btn-text">Analyser →</span>
+                <div class="spinner-btn"></div>
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- ══ TAB 1 : CONSTRUIRE & REVENDRE ══ -->
-<div class="tab-content active" id="tab-content-1">
-    <div class="status-bar">
-        <div class="spinner" id="spinner1"></div>
-        <span id="statusTexte">Entrez votre capital et lancez l'analyse.</span>
-    </div>
-    <div class="bar-results" id="barResults1">
-        <div class="search-wrap">
-            <input type="text" id="filtreNom1" placeholder="Chercher…" oninput="filtrer(1)" autocomplete="off">
-        </div>
-        <div class="cpt-results" id="cptResults1"></div>
-    </div>
-    <div class="sort-bar" id="sortBar1">
-        <span class="sort-bar-label">Trier :</span>
-        <button class="sort-pill" onclick="trierPar(1,'performance')" id="t1-pill-performance">Performance</button>
-        <button class="sort-pill" onclick="trierPar(1,'quantite')"   id="t1-pill-quantite">Quantité</button>
-        <button class="sort-pill" onclick="trierPar(1,'roi')"        id="t1-pill-roi">ROI (j)</button>
-        <button class="sort-pill" onclick="trierPar(1,'nom')"        id="t1-pill-nom">A→Z</button>
-    </div>
-    <div class="cards-list" id="cardsList1"></div>
+<!-- STATUS -->
+<div class="status-bar">
+    <div class="spinner" id="spinner"></div>
+    <span id="statusTexte">Entrez votre capital et lancez l'analyse.</span>
 </div>
 
-<!-- ══ TAB 2 : ACHETER & LOUER ══ -->
-<div class="tab-content" id="tab-content-2">
-    <div class="status-bar">
-        <div class="spinner" id="spinner2"></div>
-        <span id="statusTexte2">Lancez l'analyse pour voir les opportunités locatives.</span>
+<!-- BARRE RÉSULTATS + FILTRE -->
+<div class="bar-results" id="barResults">
+    <div class="search-wrap">
+        <input type="text" id="filtreNom" placeholder="Chercher un bâtiment…" oninput="filtrer()" autocomplete="off">
     </div>
-    <div class="bar-results" id="barResults2">
-        <div class="search-wrap">
-            <input type="text" id="filtreNom2" placeholder="Chercher…" oninput="filtrer(2)" autocomplete="off">
-        </div>
-        <div class="cpt-results" id="cptResults2"></div>
-    </div>
-    <div class="sort-bar" id="sortBar2">
-        <span class="sort-bar-label">Trier :</span>
-        <button class="sort-pill" onclick="trierPar(2,'roi')"         id="t2-pill-roi">Rentabilité (j)</button>
-        <button class="sort-pill" onclick="trierPar(2,'cashflow')"    id="t2-pill-cashflow">Cashflow</button>
-        <button class="sort-pill" onclick="trierPar(2,'quantite')"    id="t2-pill-quantite">Quantité</button>
-        <button class="sort-pill" onclick="trierPar(2,'nom')"         id="t2-pill-nom">A→Z</button>
-    </div>
-    <div class="cards-list" id="cardsList2"></div>
+    <div class="cpt-results" id="cptResults"></div>
 </div>
 
-<!-- ══ TAB 3 : COMPARATIF ══ -->
-<div class="tab-content" id="tab-content-3">
-    <div class="status-bar">
-        <div class="spinner" id="spinner3"></div>
-        <span id="statusTexte3">Lancez l'analyse pour comparer les stratégies.</span>
-    </div>
-    <div class="bar-results" id="barResults3">
-        <div class="search-wrap">
-            <input type="text" id="filtreNom3" placeholder="Chercher…" oninput="filtrer(3)" autocomplete="off">
-        </div>
-        <div class="cpt-results" id="cptResults3"></div>
-    </div>
-    <div class="sort-bar" id="sortBar3">
-        <span class="sort-bar-label">Trier :</span>
-        <button class="sort-pill" onclick="trierPar(3,'score')"    id="t3-pill-score">Meilleur score</button>
-        <button class="sort-pill" onclick="trierPar(3,'construire')" id="t3-pill-construire">Plus-value</button>
-        <button class="sort-pill" onclick="trierPar(3,'louer')"    id="t3-pill-louer">ROI location</button>
-        <button class="sort-pill" onclick="trierPar(3,'nom')"      id="t3-pill-nom">A→Z</button>
-    </div>
-    <div class="cards-list" id="cardsList3"></div>
+<!-- TRI RAPIDE -->
+<div class="sort-bar" id="sortBar">
+    <span class="sort-bar-label">Trier :</span>
+    <button class="sort-pill" onclick="trierPar('performance')" id="pill-performance">Performance</button>
+    <button class="sort-pill" onclick="trierPar('quantite')" id="pill-quantite">Quantité</button>
+    <button class="sort-pill" onclick="trierPar('roi')" id="pill-roi">ROI (jours)</button>
+    <button class="sort-pill" onclick="trierPar('nom')" id="pill-nom">Nom A→Z</button>
 </div>
+
+<!-- LISTE CARDS -->
+<div class="cards-list" id="cardsList"></div>
 
 <!-- MODAL FICHE -->
 <div class="modal-overlay" id="modalOverlay" onclick="fermerModal(event)">
@@ -732,7 +1021,7 @@
 
 <script>
     /* ══════════════════════════════════════════════
-       CONFIG
+       CONFIG & CONSTANTES
     ══════════════════════════════════════════════ */
     const PROXY = 'https://mon-proxy-empire.yangtiradol.workers.dev/?url=';
     const API   = PROXY + encodeURIComponent('https://monde8.empireimmo.com/api/buildings.json');
@@ -755,79 +1044,104 @@
         "Res. 12 chambres habitables": {"t":"4","tr":"Terrain moyen"},"Res. 12 chambres tout confort": {"t":"4","tr":"Terrain moyen"},"Res. 12 chambres vides": {"t":"4","tr":"Terrain moyen"},"Res. 12 chambres équipées": {"t":"4","tr":"Terrain moyen"},
         "Res. 24 T2 grand luxe": {"t":"6","tr":"Grand terrain"},"Res. 24 T2 habitables": {"t":"6","tr":"Grand terrain"},"Res. 24 T2 non-aménagés": {"t":"6","tr":"Grand terrain"},"Res. 24 T2 équipés": {"t":"6","tr":"Grand terrain"},
         "Res. 24 chambres habitables": {"t":"6","tr":"Grand terrain"},"Res. 24 chambres tout confort": {"t":"6","tr":"Grand terrain"},"Res. 24 chambres vides": {"t":"6","tr":"Grand terrain"},"Res. 24 chambres équipées": {"t":"6","tr":"Grand terrain"},
-        "Res. 48 chambres habitables": {"t":"10","tr":"Grand terrain"},"Res. 48 chambres tout confort": {"t":"10","tr":"Grand terrain"},"Res. 48 chambres vides": {"t":"10","tr":"Grand terrain"},"Res. 48 chambres équipées": {"t":"10","tr":"Grand terrain"},
-        "Res. T2 géant grand luxe": {"t":"8","tr":"Grand terrain"},"Res. T2 géant habitables": {"t":"8","tr":"Grand terrain"},"Res. T2 géant non-aménagés": {"t":"8","tr":"Grand terrain"},"Res. T2 géant équipés": {"t":"8","tr":"Grand terrain"},
-        "Triple complexe résidentiel géant habitable": {"t":"60","tr":"Grand parc"},"Triple complexe résidentiel géant luxueux": {"t":"60","tr":"Grand parc"},"Triple complexe résidentiel géant non-aménagé": {"t":"60","tr":"Grand parc"},"Triple complexe résidentiel géant tout confort": {"t":"60","tr":"Grand parc"}
+        "Res. 48 T2 grand luxe": {"t":"8","tr":"Parc"},"Res. 48 T2 habitables": {"t":"8","tr":"Parc"},"Res. 48 T2 non-aménagés": {"t":"8","tr":"Parc"},"Res. 48 T2 équipés": {"t":"8","tr":"Parc"},
+        "Res. 48 chambres habitables": {"t":"8","tr":"Parc"},"Res. 48 chambres tout confort": {"t":"8","tr":"Parc"},"Res. 48 chambres vides": {"t":"8","tr":"Parc"},"Res. 48 chambres équipées": {"t":"8","tr":"Parc"},
+        "Res. 6 T2 grand luxe": {"t":"2","tr":"Petit terrain"},"Res. 6 T2 habitables": {"t":"2","tr":"Petit terrain"},"Res. 6 T2 non-aménagés": {"t":"2","tr":"Petit terrain"},"Res. 6 T2 équipés": {"t":"6","tr":"Grand terrain"},
+        "Res. 6 chambres habitables": {"t":"0","tr":""},"Res. 6 chambres tout confort": {"t":"0","tr":""},"Res. 6 chambres vides": {"t":"0","tr":""},"Res. 6 chambres équipées": {"t":"0","tr":""},
+        "T2 simple habitable": {"t":"0","tr":""},"T2 simple luxueux": {"t":"0","tr":""},"T2 simple non-aménagé": {"t":"0","tr":""},"T2 simple équipé": {"t":"0","tr":""},
+        "Triple complexe résidentiel géant habitable": {"t":"64","tr":"Grand parc"},"Triple complexe résidentiel géant luxueux": {"t":"64","tr":"Grand parc"},"Triple complexe résidentiel géant non-aménagé": {"t":"64","tr":"Grand parc"},"Triple complexe résidentiel géant tout confort": {"t":"64","tr":"Grand parc"}
     };
 
-    /* ══════ ÉTAT ══════ */
-    let dataCache    = null;
-    let opps1        = [];   // Tab 1 : construire & revendre
-    let opps2        = [];   // Tab 2 : acheter & louer
-    let opps3        = [];   // Tab 3 : comparatif
+    /* ══════════════════════════════════════════════
+       ÉTAT
+    ══════════════════════════════════════════════ */
+    let dataCache   = null;
+    let opps        = [];       // opportunités calculées
     let choixTerrain = {};
-    let triActuel    = { 1: 'performance', 2: 'roi', 3: 'score' };
-    let triSens      = { 1: -1, 2: -1, 3: -1 };
-    let afficherTout = { 1: false, 2: false };
-    let tabActif     = 1;
-    let oppOuverte   = null;
+    let triActuel   = 'performance';
+    let triSens     = -1;
+    let oppOuverte  = null;     // opportunité affichée dans la modale
 
-    /* ══════ UTILS ══════ */
+    /* ══════════════════════════════════════════════
+       UTILS
+    ══════════════════════════════════════════════ */
     const fmt  = n => new Intl.NumberFormat('fr-FR').format(Math.round(n));
     const fmtS = (n, suffix='') => (n >= 0 ? '+' : '') + fmt(n) + suffix;
-    const fmtD = n => n === Infinity || isNaN(n) ? '∞' : fmt(n) + ' j';
 
-    /* ══════ TABS ══════ */
-    function switchTab(n) {
-        tabActif = n;
-        document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i+1 === n));
-        document.querySelectorAll('.tab-content').forEach((c,i) => c.classList.toggle('active', i+1 === n));
-        // Masquer objectif sur tab 2
-        document.getElementById('objectifField').style.display = (n === 2) ? 'none' : '';
-    }
-
-    /* ══════ TOGGLE ENTREPRISES ══════ */
-    function toggleEntreprises() {
-        const cb = document.getElementById('entrepriseCheck');
-        cb.checked = !cb.checked;
-        document.getElementById('toggleSwitch').classList.toggle('on', cb.checked);
-        relancer();
-    }
-
-    /* ══════ PERSISTENCE BUDGET ══════ */
-    const budgetEl = document.getElementById('budgetInput');
-    const saved = localStorage.getItem('ei_budget');
-    if (saved) budgetEl.value = saved;
-    budgetEl.addEventListener('input', e => {
-        const raw = e.target.value.replace(/\D/g, '');
-        if (!raw) { e.target.value = ''; return; }
-        e.target.value = new Intl.NumberFormat('fr-FR').format(parseInt(raw, 10));
-        localStorage.setItem('ei_budget', e.target.value);
+    /* ══════════════════════════════════════════════
+       TOGGLE ENTREPRISE
+    ══════════════════════════════════════════════ */
+    document.getElementById('entrepriseCheck').addEventListener('change', function() {
+        document.getElementById('toggleSwitch').classList.toggle('on', this.checked);
     });
 
     /* ══════════════════════════════════════════════
-       RECOMMANDATION TAB 1
+       PERSISTENCE BUDGET
     ══════════════════════════════════════════════ */
-    function calcReco(o) {
-        const g = o.gainUnitaire, cf = o.brut.gainNetLocatif, roi = o.joiROI;
-        if (g <= 0 && cf <= 0) return { label:'🚫 À éviter', cls:'c-red', action:'eviter', titre:'Non rentable', desc:`Perte à la revente (${fmt(g)} €) et cashflow négatif (${fmt(cf)} €/j).` };
-        if (cf <= 0 && g > 0)  return { label:'🚀 Revente seule', cls:'c-blue', action:'revente', titre:'Achat-revente uniquement', desc:`Revente profitable (+${fmt(g)} €) mais loyer insuffisant (${fmt(cf)} €/j).` };
-        const roiStr = (roi===Infinity||isNaN(roi)) ? '∞' : roi.toFixed(0);
-        if (roi <= 1000) return { label:'💰 Rente optimale', cls:'c-green', action:'rente', titre:'Excellente opportunité', desc:`ROI en ${roiStr} j. Chaque unité rapporte ${fmt(cf)} €/j net ensuite.` };
-        if (roi <= 2500) return { label:'⚖️ Mixte', cls:'c-violet', action:'mixte', titre:'Stratégie mixte', desc:`ROI en ${roiStr} j. Location long terme ou revente (+${fmt(g)} €).` };
-        return { label:'🏗️ Revente conseillée', cls:'c-orange', action:'revente_ok', titre:'Plus-value solide', desc:`ROI locatif très long (${roiStr} j). Plus-value +${fmt(g)} € plus intéressante.` };
-    }
+    const budgetEl = document.getElementById('budgetInput');
+    const saved    = localStorage.getItem('ei_budget');
+    if (saved) budgetEl.value = saved;
+
+    budgetEl.addEventListener('input', e => {
+        const raw = e.target.value.replace(/\D/g, '');
+        if (!raw) { e.target.value = ''; return; }
+        const f = new Intl.NumberFormat('fr-FR').format(parseInt(raw, 10));
+        e.target.value = f;
+        localStorage.setItem('ei_budget', f);
+    });
 
     /* ══════════════════════════════════════════════
-       RECOMMANDATION TAB 2 (Achat-Location)
+       RECOMMANDATION INTELLIGENTE
     ══════════════════════════════════════════════ */
-    function calcRecoLocation(o) {
-        const cf = o.cfNet, roi = o.roiJours;
-        if (cf <= 0) return { label:'🚫 Cashflow négatif', cls:'c-red', action:'eviter', titre:'Charges > Loyer', desc:`Ce bien coûte ${fmt(-cf)} €/j nets après charges et impôts. Ne pas acheter pour louer.` };
-        if (roi <= 500)  return { label:'🌟 Rentabilité top', cls:'c-green', action:'top', titre:'Amortissement ultra-rapide', desc:`Rentable en seulement ${fmtD(roi)}. Rendement exceptionnel.` };
-        if (roi <= 1500) return { label:'✅ Bon placement', cls:'c-teal', action:'bon', titre:'Investissement sain', desc:`Rentable en ${fmtD(roi)}. Cashflow de ${fmt(cf)} €/j après amortissement.` };
-        if (roi <= 3000) return { label:'⏳ Long terme', cls:'c-violet', action:'long', titre:'Patience requise', desc:`Amortissement en ${fmtD(roi)}. Convient pour horizon très long.` };
-        return { label:'⚠️ Très long', cls:'c-orange', action:'lent', titre:'Retour sur investissement lent', desc:`Amortissement en ${fmtD(roi)} — très long. Comparer à la revente.` };
+    function calcReco(o) {
+        const g = o.gainUnitaire;
+        const cf = o.brut.gainNetLocatif;
+        const roi = o.joiROI;
+
+        if (g <= 0 && cf <= 0) {
+            return {
+                label: '🚫 À éviter',
+                cls: 'c-red',
+                action: 'eviter',
+                titre: 'Investissement non rentable',
+                desc: `Ce bâtiment génère une <strong>perte à la revente (${fmt(g)} €)</strong> et un <strong>cashflow négatif (${fmt(cf)} €/j)</strong>. Ne pas investir dans ce bien.`
+            };
+        }
+        if (cf <= 0 && g > 0) {
+            return {
+                label: '🚀 Revente seule',
+                cls: 'c-blue',
+                action: 'revente',
+                titre: 'Stratégie achat-revente uniquement',
+                desc: `Ce bien est rentable à la <strong>revente (+${fmt(g)} €)</strong> mais son loyer ne couvre pas les charges (cashflow ${fmt(cf)} €/j). <strong>Construire et revendre immédiatement</strong> après chantier.`
+            };
+        }
+        const roiStr = (roi === Infinity || isNaN(roi)) ? '∞' : roi.toFixed(0);
+        if (roi <= 1000) {
+            return {
+                label: '💰 Rente optimale',
+                cls: 'c-green',
+                action: 'rente',
+                titre: 'Excellente opportunité locative',
+                desc: `ROI en seulement <strong>${roiStr} jours</strong>. Après remboursement, chaque unité rapporte <strong>${fmt(cf)} €/j net</strong>. <strong>Conserver et louer</strong> pour une rente maximale.`
+            };
+        }
+        if (roi <= 2500) {
+            return {
+                label: '⚖️ Mixte',
+                cls: 'c-violet',
+                action: 'mixte',
+                titre: 'Stratégie mixte recommandée',
+                desc: `ROI en <strong>${roiStr} jours</strong> — exploitable mais long. Possible en location si horizon long terme, sinon <strong>la revente (+${fmt(g)} €) est plus immédiate</strong>. À arbitrer selon votre trésorerie.`
+            };
+        }
+        return {
+            label: '🏗️ Revente conseillée',
+            cls: 'c-orange',
+            action: 'revente_ok',
+            titre: 'Plus-value intéressante, location risquée',
+            desc: `Le ROI locatif dépasse <strong>${roiStr} jours</strong> — très long. La plus-value de <strong>+${fmt(g)} €</strong> est en revanche solide. <strong>Revente après chantier</strong> conseillée plutôt que location.`
+        };
     }
 
     /* ══════════════════════════════════════════════
@@ -838,22 +1152,21 @@
         const budget = parseFloat(raw);
         const inclEnt = document.getElementById('entrepriseCheck').checked;
 
+        const statusEl = document.getElementById('statusTexte');
+        const spinEl   = document.getElementById('spinner');
+        const btn      = document.getElementById('btnCalc');
+
         if (isNaN(budget) || budget <= 0) {
-            document.getElementById('statusTexte').textContent = '⚠️ Veuillez entrer un capital valide.';
+            statusEl.textContent = '⚠️ Veuillez entrer un capital valide.';
             return;
         }
 
-        // Spinners
-        ['1','2','3'].forEach(n => {
-            document.getElementById('spinner'+n).classList.add('on');
-            document.getElementById('barResults'+n).classList.remove('visible');
-            document.getElementById('sortBar'+n).classList.remove('visible');
-            document.getElementById('cardsList'+n).innerHTML = '';
-        });
-        document.getElementById('statusTexte').textContent = 'Calcul en cours…';
-        document.getElementById('statusTexte2').textContent = 'Calcul en cours…';
-        document.getElementById('statusTexte3').textContent = 'Calcul en cours…';
-        document.getElementById('btnCalc').classList.add('loading');
+        statusEl.textContent = 'Calcul en cours…';
+        spinEl.classList.add('on');
+        btn.classList.add('loading');
+        document.getElementById('barResults').classList.remove('visible');
+        document.getElementById('sortBar').classList.remove('visible');
+        document.getElementById('cardsList').innerHTML = '';
 
         try {
             if (!dataCache) {
@@ -864,224 +1177,151 @@
 
             const terrains = dataCache.batiments_terrain || [];
             let bats = [];
-            if (dataCache.batiments_perso) dataCache.batiments_perso.forEach(b => { b.cat = '🏡 Personnel'; bats.push(b); });
+            if (dataCache.batiments_perso)       dataCache.batiments_perso.forEach(b => { b.cat = '🏡 Personnel'; bats.push(b); });
             if (inclEnt && dataCache.batiments_entreprise) dataCache.batiments_entreprise.forEach(b => { b.cat = '🏢 Entreprise'; bats.push(b); });
 
-            opps1 = []; opps2 = []; opps3 = [];
+            opps = [];
 
             bats.forEach((b, idx) => {
                 const pConst = parseFloat(b.construction) || 0;
-                const vFinale = parseFloat(b.valeur) || 0;
-                const loyer   = parseFloat(b.loyer)   || 0;
-                const charge  = parseFloat(b.charge)  || 0;
-                const impot   = parseFloat(b.impot)   || 0;
-                const cfNet   = loyer - charge - impot;
+                if (pConst <= 0) return;
 
-                /* ── TAB 1 : CONSTRUIRE & REVENDRE ── */
-                if (pConst > 0) {
-                    const spec    = SPECS[b.nom] || { t: '0', tr: '' };
-                    const tConst  = parseInt(spec.t) || 0;
-                    const trReq   = spec.tr || '';
-                    let terrain   = null;
-                    let selecteur = true;
-                    if (trReq.trim()) {
-                        terrain = terrains.find(t => t.nom.toLowerCase().trim() === trReq.toLowerCase().trim());
-                        if (terrain) selecteur = false;
-                    }
-                    if (!terrain) {
-                        if (choixTerrain[b.nom] === undefined) choixTerrain[b.nom] = 0;
-                        terrain = terrains[choixTerrain[b.nom]] || terrains[0];
-                    }
-                    const pTerrain  = parseFloat(terrain?.valeur) || 0;
-                    const tCharge   = parseFloat(terrain?.charge) || 0;
-                    const tImpot    = parseFloat(terrain?.impot)  || 0;
-                    const deficit   = (tCharge + tImpot) * tConst;
-                    const coutTotal = pTerrain + pConst + 1000 + deficit;
-                    const gainUnit  = vFinale - coutTotal;
-                    const qteMax    = Math.floor(budget / coutTotal);
-                    if (qteMax > 0) {
-                        const gainTotalCumul = gainUnit * qteMax;
-                        const cfCumul = cfNet * qteMax;
-                        let joiROI = Infinity, roiStr = '∞';
-                        if (cfNet > 0) { joiROI = coutTotal / cfNet; roiStr = joiROI.toFixed(1) + ' j'; }
-                        const pTer = ((pTerrain/coutTotal)*100).toFixed(1);
-                        const pCon = ((pConst/coutTotal)*100).toFixed(1);
-                        const pDef = ((deficit/coutTotal)*100).toFixed(1);
-                        const pMar = ((gainUnit/coutTotal)*100).toFixed(1);
-                        const pRnd = cfNet > 0 ? ((cfNet/coutTotal)*100).toFixed(2) : '0.00';
-                        const o1 = {
-                            id: `opp1-${idx}`, nom: b.nom, cat: b.cat,
-                            coutTotal, deficit, qteMax, gainTotalCumul, cfCumul,
-                            joiROI, roiStr,
-                            tConstStr: tConst > 0 ? `${tConst} jours` : 'Immédiat',
-                            terrainReq: trReq, selecteur, terrain, gainUnitaire: gainUnit,
-                            pcts: { ter:pTer, con:pCon, def:pDef, mar:pMar, rnd:pRnd },
-                            brut: { pTerrain, pConst, vFinale, loyer, charge, impot, gainNetLocatif: cfNet, tCharge, tImpot }
-                        };
-                        o1.reco = calcReco(o1);
-                        opps1.push(o1);
-                    }
+                const spec  = SPECS[b.nom] || { t: '0', tr: '' };
+                const tConst = parseInt(spec.t) || 0;
+                const trReq  = spec.tr || '';
+
+                let terrain = null;
+                let selecteur = true;
+
+                if (trReq.trim()) {
+                    terrain = terrains.find(t => t.nom.toLowerCase().trim() === trReq.toLowerCase().trim());
+                    if (terrain) selecteur = false;
+                }
+                if (!terrain) {
+                    if (choixTerrain[b.nom] === undefined) choixTerrain[b.nom] = 0;
+                    terrain = terrains[choixTerrain[b.nom]] || terrains[0];
                 }
 
-                /* ── TAB 2 : ACHETER & LOUER ── */
-                if (vFinale > 0) {
-                    const qteMax2 = Math.floor(budget / vFinale);
-                    if (qteMax2 > 0) {
-                        let roiJours = Infinity;
-                        if (cfNet > 0) roiJours = vFinale / cfNet;
-                        const rendJour = cfNet > 0 ? (cfNet / vFinale * 100) : 0;
-                        const o2 = {
-                            id: `opp2-${idx}`, nom: b.nom, cat: b.cat,
-                            prixAchat: vFinale, cfNet, qteMax: qteMax2,
-                            roiJours, rendJour,
-                            cfCumul: cfNet * qteMax2,
-                            brut: { vFinale, loyer, charge, impot }
-                        };
-                        o2.reco = calcRecoLocation(o2);
-                        opps2.push(o2);
-                    }
+                const pTerrain  = parseFloat(terrain.valeur) || 0;
+                const vFinale   = parseFloat(b.valeur) || 0;
+                const loyer     = parseFloat(b.loyer) || 0;
+                const charge    = parseFloat(b.charge) || 0;
+                const impot     = parseFloat(b.impot) || 0;
+
+                const tCharge     = parseFloat(terrain.charge) || 0;
+                const tImpot      = parseFloat(terrain.impot)  || 0;
+                const deficit     = (tCharge + tImpot) * tConst;
+                const coutLanc    = pTerrain + pConst + 1000;
+                const coutTotal   = coutLanc + deficit;
+                const gainUnit    = vFinale - coutTotal;
+                const qteMax      = Math.floor(budget / coutTotal);
+
+                if (qteMax <= 0) return;
+
+                const gainTotalCumul = gainUnit * qteMax;
+                const cfNet          = loyer - (charge + impot);
+                const cfCumul        = cfNet * qteMax;
+
+                let joiROI = Infinity;
+                let roiStr = '∞';
+                if (cfNet > 0) {
+                    joiROI = coutTotal / cfNet;
+                    roiStr = joiROI.toFixed(1) + ' j';
                 }
+
+                const pTer = ((pTerrain / coutTotal) * 100).toFixed(1);
+                const pCon = ((pConst / coutTotal) * 100).toFixed(1);
+                const pDef = ((deficit / coutTotal) * 100).toFixed(1);
+                const pMar = ((gainUnit / coutTotal) * 100).toFixed(1);
+                const pRnd = cfNet > 0 ? ((cfNet / coutTotal) * 100).toFixed(2) : '0.00';
+
+                const o = {
+                    id: `opp-${idx}`,
+                    nom: b.nom,
+                    cat: b.cat,
+                    coutTotal, deficit, qteMax, gainTotalCumul, cfCumul,
+                    joiROI, roiStr,
+                    tConstStr: tConst > 0 ? `${tConst} jours` : 'Immédiat',
+                    terrainReq: trReq, selecteur, terrain,
+                    gainUnitaire: gainUnit,
+                    pcts: { ter: pTer, con: pCon, def: pDef, mar: pMar, rnd: pRnd },
+                    brut: { pTerrain, pConst, vFinale, loyer, charge, impot, gainNetLocatif: cfNet, tCharge, tImpot }
+                };
+                o.reco = calcReco(o);
+                opps.push(o);
             });
 
-            /* ── TAB 3 : COMPARATIF ── */
-            // Pour chaque bâtiment présent dans les 2 tabs
-            opps1.forEach(o1 => {
-                const o2 = opps2.find(x => x.nom === o1.nom);
-                if (!o2) return;
+            trierOpp();
+            afficherCards();
+            statusEl.textContent = `${opps.length} opportunités — Appuyez pour voir la fiche détaillée.`;
 
-                // Score construire : gain% sur coût
-                const scoreCon = o1.gainUnitaire > 0 ? (o1.gainUnitaire / o1.coutTotal) : -1;
-                // Score louer : rendement journalier (1/roiJours)
-                const scoreLoc = o2.cfNet > 0 ? (o2.cfNet / o2.prixAchat) : -1;
-
-                let verdict, verdictCls, winner;
-                if (scoreCon < 0 && scoreLoc < 0) {
-                    verdict = '🚫 À éviter'; verdictCls = 'c-red'; winner = 'none';
-                } else if (scoreCon < 0) {
-                    verdict = '🏠 Acheter & louer'; verdictCls = 'c-teal'; winner = 'loc';
-                } else if (scoreLoc < 0) {
-                    verdict = '🏗️ Construire & vendre'; verdictCls = 'c-blue'; winner = 'con';
-                } else {
-                    // Les deux sont positifs — comparer
-                    // Normaliser : gain immédiat vs rente quotidienne → on compare le % de retour
-                    const scoreConN = scoreCon;        // retour sur investissement unitaire %
-                    const scoreLocN = scoreLoc * 365;  // rendement annualisé
-                    if (scoreLocN > scoreConN * 1.5) {
-                        verdict = '🏠 Acheter & louer'; verdictCls = 'c-teal'; winner = 'loc';
-                    } else if (scoreConN > scoreLocN * 1.5) {
-                        verdict = '🏗️ Construire & vendre'; verdictCls = 'c-blue'; winner = 'con';
-                    } else {
-                        verdict = '⚖️ Stratégie mixte'; verdictCls = 'c-violet'; winner = 'both';
-                    }
-                }
-
-                const globalScore = Math.max(scoreCon, scoreLoc);
-
-                opps3.push({
-                    nom: o1.nom, cat: o1.cat,
-                    o1, o2,
-                    verdict, verdictCls, winner,
-                    globalScore, scoreCon, scoreLoc
-                });
-            });
-
-            // Trier et afficher
-            trierOpp(1); afficherCards(1);
-            trierOpp(2); afficherCards(2);
-            trierOpp(3); afficherCards(3);
-
-            document.getElementById('statusTexte').textContent  = `${opps1.length} opportunités — Appuyez pour le détail.`;
-            document.getElementById('statusTexte2').textContent = `${opps2.length} biens — Amortissement incluant charges & impôts.`;
-            document.getElementById('statusTexte3').textContent = `${opps3.length} comparaisons — Construire ou acheter ?`;
-
-        } catch(err) {
+        } catch (err) {
             console.error(err);
-            ['statusTexte','statusTexte2','statusTexte3'].forEach(id => {
-                document.getElementById(id).textContent = '⚠️ Erreur réseau — vérifiez votre connexion.';
-            });
+            statusEl.textContent = '⚠️ Erreur réseau — vérifiez votre connexion.';
         } finally {
-            ['1','2','3'].forEach(n => document.getElementById('spinner'+n).classList.remove('on'));
-            document.getElementById('btnCalc').classList.remove('loading');
+            spinEl.classList.remove('on');
+            btn.classList.remove('loading');
         }
     }
 
     /* ══════════════════════════════════════════════
        TRI
     ══════════════════════════════════════════════ */
-    function trierOpp(tab) {
+    function trierOpp() {
         const strat = document.getElementById('strategieSelect').value;
-        if (tab === 1) {
-            opps1.sort((a, b) => {
-                let va, vb;
-                switch(triActuel[1]) {
-                    case 'performance':
-                        if (strat === 'plusvalue') { va=a.gainTotalCumul; vb=b.gainTotalCumul; }
-                        else if (strat === 'cashflow') { va=a.cfCumul; vb=b.cfCumul; }
-                        else { va=-a.joiROI; vb=-b.joiROI; }
-                        break;
-                    case 'roi':      va=-a.joiROI;       vb=-b.joiROI;      break;
-                    case 'quantite': va= a.qteMax;        vb= b.qteMax;      break;
-                    case 'nom':      return triSens[1] * a.nom.localeCompare(b.nom);
-                }
-                return triSens[1] * (va - vb);
-            });
-        } else if (tab === 2) {
-            opps2.sort((a, b) => {
-                let va, vb;
-                switch(triActuel[2]) {
-                    case 'roi':      va=-a.roiJours;   vb=-b.roiJours;  break;
-                    case 'cashflow': va= a.cfNet;       vb= b.cfNet;     break;
-                    case 'quantite': va= a.qteMax;      vb= b.qteMax;    break;
-                    case 'nom':      return triSens[2] * a.nom.localeCompare(b.nom);
-                }
-                return triSens[2] * (va - vb);
-            });
-        } else if (tab === 3) {
-            opps3.sort((a, b) => {
-                let va, vb;
-                switch(triActuel[3]) {
-                    case 'score':     va= a.globalScore; vb= b.globalScore; break;
-                    case 'construire':va= a.scoreCon;    vb= b.scoreCon;    break;
-                    case 'louer':     va= a.scoreLoc;    vb= b.scoreLoc;    break;
-                    case 'nom':       return triSens[3] * a.nom.localeCompare(b.nom);
-                }
-                return triSens[3] * (va - vb);
-            });
-        }
+        opps.sort((a, b) => {
+            let va, vb;
+            switch(triActuel) {
+                case 'performance':
+                    if (strat === 'plusvalue') { va = a.gainTotalCumul; vb = b.gainTotalCumul; }
+                    else if (strat === 'cashflow') { va = a.cfCumul; vb = b.cfCumul; }
+                    else { va = -a.joiROI; vb = -b.joiROI; }
+                    break;
+                case 'roi':    va = -a.joiROI; vb = -b.joiROI; break;
+                case 'quantite': va = a.qteMax; vb = b.qteMax; break;
+                case 'nom': return triSens * a.nom.localeCompare(b.nom);
+            }
+            return triSens * (va - vb);
+        });
     }
 
-    function trierPar(tab, col) {
-        if (triActuel[tab] === col) triSens[tab] *= -1;
-        else { triActuel[tab] = col; triSens[tab] = -1; }
-        document.querySelectorAll(`#sortBar${tab} .sort-pill`).forEach(p => p.classList.remove('active'));
-        document.getElementById(`t${tab}-pill-${col}`)?.classList.add('active');
-        trierOpp(tab);
-        afficherCards(tab);
+    function trierPar(col) {
+        if (triActuel === col) triSens *= -1;
+        else { triActuel = col; triSens = -1; }
+        document.querySelectorAll('.sort-pill').forEach(p => p.classList.remove('active'));
+        document.getElementById('pill-' + col)?.classList.add('active');
+        trierOpp();
+        afficherCards();
     }
 
     /* ══════════════════════════════════════════════
-       CARDS TAB 1 & 2
+       AFFICHAGE CARDS
     ══════════════════════════════════════════════ */
-    function creerCard1(o, rang) {
+    let afficherTout = false; // toggle "voir tous les bâtiments"
+
+    function creerCard(o, rang, strat) {
         const card = document.createElement('div');
         const estTop = rang < 3;
-        card.className = 'card ' + o.reco.cls + (estTop ? ' card-top' : '');
+        card.className = 'card' + (estTop ? ' card-top' : '');
         card.style.animationDelay = `${Math.min(rang * 0.04, 0.4)}s`;
-        card.onclick = () => ouvrirModal1(o);
-        const strat = document.getElementById('strategieSelect').value;
+        card.onclick = () => ouvrirModal(o);
+
         let perf = '';
         if (strat === 'plusvalue') {
             const cls = o.gainTotalCumul >= 0 ? 't-green' : 't-red';
-            perf = `<div class="metric-chip"><div class="val ${cls}">${fmtS(o.gainTotalCumul,' €')}</div><div class="lbl">Plus-value totale</div></div>`;
+            perf = `<div class="metric-chip"><div class="val ${cls}">${fmtS(o.gainTotalCumul, ' €')}</div><div class="lbl">Plus-value totale</div></div>`;
         } else if (strat === 'cashflow') {
             const cls = o.cfCumul >= 0 ? 't-green' : 't-red';
-            perf = `<div class="metric-chip"><div class="val ${cls}">${fmtS(o.cfCumul,' €/j')}</div><div class="lbl">Rente nette</div></div>`;
+            perf = `<div class="metric-chip"><div class="val ${cls}">${fmtS(o.cfCumul, ' €/j')}</div><div class="lbl">Rente nette</div></div>`;
         } else {
             perf = `<div class="metric-chip"><div class="val t-orange">${o.roiStr}</div><div class="lbl">ROI</div></div>`;
         }
+
+        const topBadge = estTop ? `<div class="top-rank">#${rang + 1}</div>` : '';
+
         card.innerHTML = `
             <div class="card-main">
-                ${estTop ? `<div class="top-rank">#${rang+1}</div>` : ''}
+                ${topBadge}
                 <div class="card-name-row">
                     <div>
                         <div class="card-name">${o.nom}</div>
@@ -1093,460 +1333,289 @@
                     ${perf}
                     <div class="metric-chip"><div class="val t-blue">×${o.qteMax}</div><div class="lbl">Max achet.</div></div>
                     <div class="metric-chip"><div class="val">${fmt(o.coutTotal)} €</div><div class="lbl">Coût/unité</div></div>
-                    <div class="metric-chip"><div class="val t-orange">${o.roiStr}</div><div class="lbl">ROI loc.</div></div>
+                    <div class="metric-chip"><div class="val t-orange">${o.roiStr}</div><div class="lbl">ROI</div></div>
                 </div>
-            </div>`;
-        return card;
-    }
-
-    function creerCard2(o, rang) {
-        const card = document.createElement('div');
-        const estTop = rang < 3;
-        card.className = 'card ' + o.reco.cls + (estTop ? ' card-top' : '');
-        card.style.animationDelay = `${Math.min(rang * 0.04, 0.4)}s`;
-        card.onclick = () => ouvrirModal2(o);
-        const cfCls = o.cfNet >= 0 ? 't-green' : 't-red';
-        const roiStr = o.roiJours === Infinity ? '∞' : fmt(o.roiJours) + ' j';
-        const rendStr = o.cfNet > 0 ? o.rendJour.toFixed(3) + '%/j' : '—';
-        card.innerHTML = `
-            <div class="card-main">
-                ${estTop ? `<div class="top-rank">#${rang+1}</div>` : ''}
-                <div class="card-name-row">
-                    <div>
-                        <div class="card-name">${o.nom}</div>
-                        <div class="card-type">${o.cat} · Achat direct</div>
-                    </div>
-                    <span class="card-badge ${o.reco.cls}">${o.reco.label}</span>
-                </div>
-                <div class="card-metrics">
-                    <div class="metric-chip"><div class="val t-orange">${roiStr}</div><div class="lbl">Amortiss.</div></div>
-                    <div class="metric-chip"><div class="val ${cfCls}">${fmtS(o.cfNet,' €/j')}</div><div class="lbl">Cashflow/j</div></div>
-                    <div class="metric-chip"><div class="val t-blue">×${o.qteMax}</div><div class="lbl">Max achet.</div></div>
-                    <div class="metric-chip"><div class="val t-teal">${rendStr}</div><div class="lbl">Rendement</div></div>
-                </div>
-            </div>`;
-        return card;
-    }
-
-    /* ══════════════════════════════════════════════
-       CARDS TAB 3
-    ══════════════════════════════════════════════ */
-    function creerCard3(c, rang) {
-        const card = document.createElement('div');
-        card.className = 'cmp-card';
-        card.style.animationDelay = `${Math.min(rang * 0.04, 0.4)}s`;
-        card.onclick = () => ouvrirModal3(c);
-
-        const o1 = c.o1, o2 = c.o2;
-        const gainUStr   = o1.gainUnitaire >= 0 ? fmtS(o1.gainUnitaire,' €') : fmt(o1.gainUnitaire)+' €';
-        const gainUCls   = o1.gainUnitaire >= 0 ? 't-green' : 't-red';
-        const roiLocStr  = o2.roiJours === Infinity ? '∞' : fmt(o2.roiJours)+' j';
-        const cfCls      = o2.cfNet >= 0 ? 't-green' : 't-red';
-
-        const conWin = c.winner === 'con' || c.winner === 'both';
-        const locWin = c.winner === 'loc' || c.winner === 'both';
-
-        card.innerHTML = `
-            <div class="cmp-header">
-                <div>
-                    <div class="cmp-name">${c.nom}</div>
-                    <div class="cmp-sub">${c.cat}</div>
-                </div>
-                <span class="verdict-badge ${c.verdictCls}">${c.verdict}</span>
             </div>
-            <div class="cmp-grid">
-                <div class="cmp-col ${conWin ? 'cmp-winner' : ''}">
-                    <div class="cmp-col-title">🏗️ Construire & Vendre</div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Coût total</span>
-                        <span class="cmp-row-val">${fmt(o1.coutTotal)} €</span>
-                    </div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Plus-value</span>
-                        <span class="cmp-row-val ${gainUCls}">${gainUStr}</span>
-                    </div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Délai chantier</span>
-                        <span class="cmp-row-val">${o1.tConstStr}</span>
-                    </div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Quantité max</span>
-                        <span class="cmp-row-val t-blue">×${o1.qteMax}</span>
-                    </div>
-                </div>
-                <div class="cmp-col ${locWin ? 'cmp-winner' : ''}">
-                    <div class="cmp-col-title">🏠 Acheter & Louer</div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Prix d'achat</span>
-                        <span class="cmp-row-val">${fmt(o2.prixAchat)} €</span>
-                    </div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Cashflow net</span>
-                        <span class="cmp-row-val ${cfCls}">${fmtS(o2.cfNet,' €/j')}</span>
-                    </div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Amortissement</span>
-                        <span class="cmp-row-val t-orange">${roiLocStr}</span>
-                    </div>
-                    <div class="cmp-row">
-                        <span class="cmp-row-lbl">Quantité max</span>
-                        <span class="cmp-row-val t-blue">×${o2.qteMax}</span>
-                    </div>
-                </div>
-            </div>`;
+        `;
         return card;
     }
 
-    /* ══════════════════════════════════════════════
-       AFFICHAGE CARDS
-    ══════════════════════════════════════════════ */
-    function afficherCards(tab) {
-        const liste = document.getElementById('cardsList' + tab);
-        const terme = (document.getElementById('filtreNom' + tab)?.value || '').toLowerCase().trim();
+    function afficherCards() {
+        const liste  = document.getElementById('cardsList');
+        const terme  = document.getElementById('filtreNom').value.toLowerCase().trim();
+        const strat  = document.getElementById('strategieSelect').value;
 
-        if (tab === 1) {
-            let base = terme ? opps1.filter(o => o.nom.toLowerCase().includes(terme)) : opps1;
-            const rentables  = base.filter(o => o.reco.action !== 'eviter');
-            const pertesSech = base.filter(o => o.reco.action === 'eviter');
-            liste.innerHTML = '';
-            if (base.length === 0) { liste.innerHTML = `<div class="empty-state">Aucun bâtiment trouvé.</div>`; }
-            else {
-                const strat = document.getElementById('strategieSelect').value;
-                if (rentables.slice(0,3).length > 0) {
-                    const sep = document.createElement('div'); sep.className='rank-sep';
-                    sep.innerHTML = `🏆 TOP 3 — ${strat==='plusvalue'?'Plus-value':strat==='cashflow'?'Rente':'ROI'}`;
-                    liste.appendChild(sep);
-                    rentables.slice(0,3).forEach((o,i) => liste.appendChild(creerCard1(o, i)));
-                }
-                if (rentables.slice(3).length > 0) {
-                    const sep2 = document.createElement('div'); sep2.className='rank-sep';
-                    sep2.textContent = `Autres (${rentables.slice(3).length})`;
-                    liste.appendChild(sep2);
-                    rentables.slice(3).forEach((o,i) => liste.appendChild(creerCard1(o, i+3)));
-                }
-                if (pertesSech.length > 0) {
-                    const btn = document.createElement('button'); btn.className='btn-toggle-pertes';
-                    btn.textContent = afficherTout[1] ? `▲ Masquer les ${pertesSech.length} non-rentables` : `▼ Voir les ${pertesSech.length} non-rentables`;
-                    btn.onclick = () => { afficherTout[1] = !afficherTout[1]; afficherCards(1); };
-                    liste.appendChild(btn);
-                    if (afficherTout[1]) pertesSech.forEach((o,i) => liste.appendChild(creerCard1(o, rentables.length+i)));
-                }
+        // Filtrage par nom
+        let base = terme ? opps.filter(o => o.nom.toLowerCase().includes(terme)) : opps;
+
+        // Séparation rentables / pertes sèches
+        const rentables   = base.filter(o => o.reco.action !== 'eviter');
+        const pertesSech  = base.filter(o => o.reco.action === 'eviter');
+
+        liste.innerHTML = '';
+
+        if (base.length === 0) {
+            liste.innerHTML = `<div class="empty-state">Aucun bâtiment trouvé<br>pour ce capital ou ce filtre.</div>`;
+        } else {
+            // ── TOP 3 ──
+            const top3 = rentables.slice(0, 3);
+            const reste = rentables.slice(3);
+
+            if (top3.length > 0) {
+                const sep = document.createElement('div');
+                sep.className = 'rank-sep';
+                sep.innerHTML = `🏆 TOP 3 — ${strat === 'plusvalue' ? 'Plus-value' : strat === 'cashflow' ? 'Rente nette' : 'ROI rapide'}`;
+                liste.appendChild(sep);
+                top3.forEach((o, i) => liste.appendChild(creerCard(o, i, strat)));
             }
-            document.getElementById('barResults1').classList.add('visible');
-            document.getElementById('sortBar1').classList.add('visible');
-            document.getElementById('pill-performance') && document.getElementById(`t1-pill-${triActuel[1]}`)?.classList.add('active');
-            const nb = rentables?.length ?? 0;
-            document.getElementById('cptResults1').innerHTML = terme ? `<b>${base.length}</b>/${opps1.length}` : `<b>${nb}</b> rentables · <span style="color:var(--text-3)">${pertesSech?.length ?? 0} masquées</span>`;
-        }
-        else if (tab === 2) {
-            let base = terme ? opps2.filter(o => o.nom.toLowerCase().includes(terme)) : opps2;
-            const bons   = base.filter(o => o.reco.action !== 'eviter');
-            const mauvais= base.filter(o => o.reco.action === 'eviter');
-            liste.innerHTML = '';
-            if (base.length === 0) { liste.innerHTML = `<div class="empty-state">Aucun bien trouvé.</div>`; }
-            else {
-                if (bons.slice(0,3).length > 0) {
-                    const sep = document.createElement('div'); sep.className='rank-sep';
-                    sep.innerHTML = `🏆 TOP 3 — Meilleure rentabilité locative`;
-                    liste.appendChild(sep);
-                    bons.slice(0,3).forEach((o,i) => liste.appendChild(creerCard2(o, i)));
-                }
-                if (bons.slice(3).length > 0) {
-                    const sep2 = document.createElement('div'); sep2.className='rank-sep';
-                    sep2.textContent = `Autres biens (${bons.slice(3).length})`;
-                    liste.appendChild(sep2);
-                    bons.slice(3).forEach((o,i) => liste.appendChild(creerCard2(o, i+3)));
-                }
-                if (mauvais.length > 0) {
-                    const btn = document.createElement('button'); btn.className='btn-toggle-pertes';
-                    btn.textContent = afficherTout[2] ? `▲ Masquer les ${mauvais.length} cashflow négatif` : `▼ Voir les ${mauvais.length} biens à cashflow négatif`;
-                    btn.onclick = () => { afficherTout[2] = !afficherTout[2]; afficherCards(2); };
-                    liste.appendChild(btn);
-                    if (afficherTout[2]) mauvais.forEach((o,i) => liste.appendChild(creerCard2(o, bons.length+i)));
-                }
+
+            if (reste.length > 0) {
+                const sep2 = document.createElement('div');
+                sep2.className = 'rank-sep';
+                sep2.textContent = `Autres opportunités (${reste.length})`;
+                liste.appendChild(sep2);
+                reste.forEach((o, i) => liste.appendChild(creerCard(o, i + 3, strat)));
             }
-            document.getElementById('barResults2').classList.add('visible');
-            document.getElementById('sortBar2').classList.add('visible');
-            document.getElementById(`t2-pill-${triActuel[2]}`)?.classList.add('active');
-            const nb2 = bons?.length ?? 0;
-            document.getElementById('cptResults2').innerHTML = terme ? `<b>${base.length}</b>/${opps2.length}` : `<b>${nb2}</b> rentables · <span style="color:var(--text-3)">${mauvais?.length ?? 0} négatives</span>`;
-        }
-        else if (tab === 3) {
-            let base = terme ? opps3.filter(c => c.nom.toLowerCase().includes(terme)) : opps3;
-            liste.innerHTML = '';
-            if (base.length === 0) { liste.innerHTML = `<div class="empty-state">Aucun bâtiment comparé.</div>`; }
-            else {
-                const meilleursLoc = base.filter(c => c.winner === 'loc');
-                const meilleursCon = base.filter(c => c.winner === 'con');
-                const mixtes       = base.filter(c => c.winner === 'both');
-                const mauvais      = base.filter(c => c.winner === 'none');
-                const renderGroup = (items, titre) => {
-                    if (!items.length) return;
-                    const sep = document.createElement('div'); sep.className='rank-sep';
-                    sep.textContent = titre;
-                    liste.appendChild(sep);
-                    items.forEach((c, i) => liste.appendChild(creerCard3(c, i)));
+
+            // ── PERTES SÈCHES (masquées par défaut) ──
+            if (pertesSech.length > 0) {
+                const sepLoss = document.createElement('div');
+                sepLoss.className = 'rank-sep rank-sep-loss';
+                liste.appendChild(sepLoss);
+
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'btn-toggle-pertes';
+                toggleBtn.id = 'btnTogglePertes';
+                toggleBtn.textContent = afficherTout
+                    ? `▲ Masquer les ${pertesSech.length} non-rentables`
+                    : `▼ Voir aussi les ${pertesSech.length} bâtiments non-rentables`;
+                toggleBtn.onclick = () => {
+                    afficherTout = !afficherTout;
+                    afficherCards();
                 };
-                renderGroup(base.filter(c => c.winner !== 'none' && triActuel[3] !== 'nom').slice(0, 3), '🏆 Meilleures opportunités');
-                if (triActuel[3] !== 'nom') {
-                    const autres = base.filter(c => c.winner !== 'none').slice(3);
-                    if (autres.length) {
-                        const sep = document.createElement('div'); sep.className='rank-sep';
-                        sep.textContent = `Autres (${autres.length})`;
-                        liste.appendChild(sep);
-                        autres.forEach((c,i) => liste.appendChild(creerCard3(c, i+3)));
-                    }
-                    if (mauvais.length) {
-                        const btn = document.createElement('button'); btn.className='btn-toggle-pertes';
-                        btn.textContent = `▼ Voir les ${mauvais.length} biens à éviter`;
-                        btn.onclick = () => {
-                            btn.style.display='none';
-                            mauvais.forEach((c,i) => liste.appendChild(creerCard3(c, base.length+i)));
-                        };
-                        liste.appendChild(btn);
-                    }
-                } else {
-                    // Tri alphabétique : tout afficher d'un coup
-                    base.forEach((c,i) => liste.appendChild(creerCard3(c, i)));
+                liste.appendChild(toggleBtn);
+
+                if (afficherTout) {
+                    pertesSech.forEach((o, i) => liste.appendChild(creerCard(o, rentables.length + i, strat)));
                 }
             }
-            document.getElementById('barResults3').classList.add('visible');
-            document.getElementById('sortBar3').classList.add('visible');
-            document.getElementById(`t3-pill-${triActuel[3]}`)?.classList.add('active');
-            const rentables3 = base.filter(c => c.winner !== 'none').length;
-            document.getElementById('cptResults3').innerHTML = terme
-                ? `<b>${base.length}</b>/${opps3.length}`
-                : `<b>${rentables3}</b> rentables · <b class="t-teal">${base.filter(c=>c.winner==='loc').length}</b> → louer · <b class="t-blue">${base.filter(c=>c.winner==='con').length}</b> → construire`;
         }
+
+        // Barre résultats + tri
+        document.getElementById('barResults').classList.add('visible');
+        document.getElementById('sortBar').classList.add('visible');
+        document.getElementById('pill-' + triActuel)?.classList.add('active');
+
+        const cpt = document.getElementById('cptResults');
+        const nb  = rentables.length;
+        cpt.innerHTML = terme
+            ? `<b>${base.length}</b>/${opps.length}`
+            : `<b>${nb}</b> rentables · <span style="color:var(--text-3)">${pertesSech.length} masquées</span>`;
     }
 
-    function filtrer(tab) { afficherCards(tab); }
-    function relancer() { if (opps1.length > 0 || opps2.length > 0) analyser(false); }
+    function filtrer() { afficherCards(); }
+    function relancer() { if (opps.length > 0) analyser(false); }
 
     /* ══════════════════════════════════════════════
-       MODAL TAB 1
+       MODAL FICHE
     ══════════════════════════════════════════════ */
-    function ouvrirModal1(o) {
+    function ouvrirModal(o) {
         oppOuverte = o;
         document.getElementById('modalTitre').textContent = o.nom;
-        document.getElementById('modalSousTitre').textContent = `${o.cat} · ${o.tConstStr} · Construire & Revendre`;
+        document.getElementById('modalSousTitre').textContent = `${o.cat}  ·  ${o.tConstStr}`;
+
         const body = document.getElementById('modalBody');
         const terrains = dataCache?.batiments_terrain || [];
         const gUnit = o.gainUnitaire;
         const clsG  = gUnit >= 0 ? 't-green' : 't-red';
         const sigG  = gUnit >= 0 ? '+' : '';
+
+        // Terrain HTML
         let terrainHTML = '';
         if (o.selecteur) {
-            let opts = terrains.map((t, i) => `<option value="${i}" ${t.nom===o.terrain.nom?'selected':''}>${t.nom} — ${fmt(t.valeur)} €</option>`).join('');
-            terrainHTML = `<div class="terrain-block"><label>Terrain (modifiable)</label><div class="select-wrap"><select onchange="changerTerrain('${o.nom.replace(/'/g,"\\'")}', this.value)">${opts}</select></div></div>`;
+            let opts = terrains.map((t, i) => {
+                const sel = t.nom === o.terrain.nom ? 'selected' : '';
+                return `<option value="${i}" ${sel}>${t.nom} — ${fmt(t.valeur)} €</option>`;
+            }).join('');
+            terrainHTML = `
+            <div class="terrain-block">
+                <label>Terrain utilisé (modifiable)</label>
+                <div class="select-wrap">
+                    <select onchange="changerTerrain('${o.nom.replace(/'/g,"\\'")}', this.value)">${opts}</select>
+                </div>
+            </div>`;
         } else {
-            terrainHTML = `<div style="margin-bottom:12px;"><div class="section-title">Terrain</div><span class="badge-terrain-fixe">🔒 ${o.terrain.nom} — ${fmt(o.brut.pTerrain)} €</span></div>`;
+            terrainHTML = `
+            <div style="margin-bottom:12px;">
+                <div class="section-title">Terrain</div>
+                <span class="badge-terrain-fixe">🔒 ${o.terrain.nom} — ${fmt(o.brut.pTerrain)} €</span>
+            </div>`;
         }
-        const roiPct = o.joiROI===Infinity ? 0 : Math.min(100, Math.max(2, 100 - (o.joiROI/3000)*100));
+
+        // Barre ROI visuelle
+        const roiPct = o.joiROI === Infinity ? 0 : Math.min(100, Math.max(2, 100 - (o.joiROI / 3000) * 100));
+        const roiHtml = `
+        <div class="roi-bar-wrap">
+            <div class="roi-bar-label">
+                <span class="name">Seuil d'amortissement</span>
+                <span class="val">${o.roiStr}</span>
+            </div>
+            <div class="roi-bar"><div class="roi-bar-fill" style="width:${roiPct}%"></div></div>
+            <div class="roi-formula">${fmt(o.coutTotal)} € ÷ ${fmt(o.brut.gainNetLocatif)} €/j = ${o.roiStr}</div>
+        </div>`;
+
+        // Tableau financier
         const cfCls = o.brut.gainNetLocatif >= 0 ? 't-green' : 't-red';
+
         body.innerHTML = `
+        <!-- RECOMMANDATION -->
         <div class="reco-block ${o.reco.cls}">
             <div class="reco-title">${o.reco.label} — ${o.reco.titre}</div>
             <div class="reco-desc">${o.reco.desc}</div>
         </div>
+
+        <!-- TERRAIN -->
         ${terrainHTML}
+
+        <!-- KPI RAPIDES -->
         <div class="section">
             <div class="section-title">Résumé chiffré</div>
             <div class="kpi-grid">
-                <div class="kpi"><div class="kpi-val">${fmt(o.coutTotal)} €</div><div class="kpi-lbl">Coût / unité</div></div>
-                <div class="kpi"><div class="kpi-val t-blue">×${o.qteMax}</div><div class="kpi-lbl">Max achetables</div></div>
-                <div class="kpi"><div class="kpi-val ${clsG}">${sigG}${fmt(gUnit)} €</div><div class="kpi-lbl">Plus-value/unité</div></div>
-                <div class="kpi"><div class="kpi-val ${cfCls}">${fmtS(o.brut.gainNetLocatif,' €/j')}</div><div class="kpi-lbl">Cashflow net</div></div>
+                <div class="kpi">
+                    <div class="kpi-val">${fmt(o.coutTotal)} €</div>
+                    <div class="kpi-lbl">Coût / unité</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-val t-blue">×${o.qteMax}</div>
+                    <div class="kpi-lbl">Max achetables</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-val ${clsG}">${sigG}${fmt(gUnit)} €</div>
+                    <div class="kpi-lbl">Plus-value/unité</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-val ${cfCls}">${fmtS(o.brut.gainNetLocatif, ' €/j')}</div>
+                    <div class="kpi-lbl">Cashflow net</div>
+                </div>
             </div>
         </div>
+
+        <!-- ROI -->
         <div class="section">
-            <div class="section-title">Amortissement locatif</div>
-            <div class="roi-bar-wrap">
-                <div class="roi-bar-label"><span class="name">Seuil d'amortissement</span><span class="val">${o.roiStr}</span></div>
-                <div class="roi-bar"><div class="roi-bar-fill" style="width:${roiPct}%"></div></div>
-                <div class="roi-formula">${fmt(o.coutTotal)} € ÷ ${fmt(o.brut.gainNetLocatif)} €/j = ${o.roiStr}</div>
-            </div>
+            <div class="section-title">Amortissement</div>
+            ${roiHtml}
         </div>
+
+        <!-- TABLEAU FINANCIER -->
         <div class="section">
             <div class="section-title">Détail comptable — ×${o.qteMax} unités</div>
             <table class="fin-table">
-                <thead><tr><th>Poste</th><th>Unitaire</th><th>Total (×${o.qteMax})</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Poste</th>
+                        <th>Unitaire <span class="th-pct">% du coût</span></th>
+                        <th>Total (×${o.qteMax})</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr class="tr-section"><td colspan="3">1 · COÛTS DE LANCEMENT</td></tr>
-                    <tr><td>Terrain</td><td>${fmt(o.brut.pTerrain)} € <span class="pct-badge">${o.pcts.ter}%</span></td><td>${fmt(o.brut.pTerrain*o.qteMax)} €</td></tr>
-                    <tr><td>Construction</td><td>${fmt(o.brut.pConst)} € <span class="pct-badge">${o.pcts.con}%</span></td><td>${fmt(o.brut.pConst*o.qteMax)} €</td></tr>
-                    <tr><td>Taxe fixe</td><td>1 000 € <span class="pct-badge">${((1000/o.coutTotal)*100).toFixed(1)}%</span></td><td>${fmt(1000*o.qteMax)} €</td></tr>
-                    <tr><td style="color:var(--orange)">Déficit chantier</td><td style="color:var(--orange)">${fmt(o.deficit)} € <span class="pct-badge">${o.pcts.def}%</span></td><td style="color:var(--orange)">${fmt(o.deficit*o.qteMax)} €</td></tr>
-                    <tr class="tr-total"><td>Coût global</td><td><strong>${fmt(o.coutTotal)} €</strong></td><td><strong>${fmt(o.coutTotal*o.qteMax)} €</strong></td></tr>
-                    <tr class="tr-section"><td colspan="3">2 · REVENTE</td></tr>
-                    <tr><td>Valeur d'expertise</td><td>${fmt(o.brut.vFinale)} €</td><td>${fmt(o.brut.vFinale*o.qteMax)} €</td></tr>
-                    <tr class="${gUnit>=0?'tr-gain':'tr-loss'}"><td>Plus-value nette</td><td><strong class="${clsG}">${sigG}${fmt(gUnit)} €</strong> <span class="pct-badge">${sigG}${o.pcts.mar}%</span></td><td><strong class="${clsG}">${sigG}${fmt(o.gainTotalCumul)} €</strong></td></tr>
-                    <tr class="tr-section"><td colspan="3">3 · LOCATION (par jour)</td></tr>
-                    <tr><td>Loyer brut</td><td>${fmt(o.brut.loyer)} €/j</td><td>${fmt(o.brut.loyer*o.qteMax)} €/j</td></tr>
-                    <tr><td>Charges</td><td>−${fmt(o.brut.charge)} €/j</td><td>−${fmt(o.brut.charge*o.qteMax)} €/j</td></tr>
-                    <tr><td>Impôts</td><td>−${fmt(o.brut.impot)} €/j</td><td>−${fmt(o.brut.impot*o.qteMax)} €/j</td></tr>
-                    <tr class="tr-total"><td>Cashflow net</td><td><span class="${cfCls}">${fmtS(o.brut.gainNetLocatif,' €/j')}</span></td><td><span class="${cfCls}">${fmtS(o.brut.gainNetLocatif*o.qteMax,' €/j')}</span></td></tr>
-                </tbody>
-            </table>
-        </div>`;
-        document.getElementById('modalOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    /* ══════════════════════════════════════════════
-       MODAL TAB 2
-    ══════════════════════════════════════════════ */
-    function ouvrirModal2(o) {
-        oppOuverte = o;
-        document.getElementById('modalTitre').textContent = o.nom;
-        document.getElementById('modalSousTitre').textContent = `${o.cat} · Acheter & Louer`;
-        const body = document.getElementById('modalBody');
-        const cfCls = o.cfNet >= 0 ? 't-green' : 't-red';
-        const roiStr = o.roiJours === Infinity ? '∞' : fmt(o.roiJours) + ' jours';
-        const roiPct = o.roiJours === Infinity ? 0 : Math.min(100, Math.max(2, 100 - (o.roiJours / 3000) * 100));
-        const rendAnnuel = o.cfNet > 0 ? (o.rendJour * 365).toFixed(1) + '%' : '—';
-
-        body.innerHTML = `
-        <div class="reco-block ${o.reco.cls}">
-            <div class="reco-title">${o.reco.label} — ${o.reco.titre}</div>
-            <div class="reco-desc">${o.reco.desc}</div>
-        </div>
-        <div class="section">
-            <div class="section-title">Résumé chiffré</div>
-            <div class="kpi-grid">
-                <div class="kpi"><div class="kpi-val">${fmt(o.prixAchat)} €</div><div class="kpi-lbl">Prix d'achat</div></div>
-                <div class="kpi"><div class="kpi-val t-blue">×${o.qteMax}</div><div class="kpi-lbl">Max achetables</div></div>
-                <div class="kpi"><div class="kpi-val ${cfCls}">${fmtS(o.cfNet,' €/j')}</div><div class="kpi-lbl">Cashflow net/j</div></div>
-                <div class="kpi"><div class="kpi-val t-teal">${rendAnnuel}</div><div class="kpi-lbl">Rendement/an</div></div>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-title">Amortissement</div>
-            <div class="roi-bar-wrap">
-                <div class="roi-bar-label"><span class="name">Rentable en</span><span class="val">${roiStr}</span></div>
-                <div class="roi-bar"><div class="roi-bar-fill" style="width:${roiPct}%"></div></div>
-                <div class="roi-formula">${fmt(o.prixAchat)} € ÷ ${fmtS(o.cfNet,' €/j')} = ${roiStr}</div>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-title">Détail financier — ×${o.qteMax} biens</div>
-            <table class="fin-table">
-                <thead><tr><th>Poste</th><th>Unitaire</th><th>Total (×${o.qteMax})</th></tr></thead>
-                <tbody>
-                    <tr class="tr-section"><td colspan="3">INVESTISSEMENT</td></tr>
-                    <tr><td>Prix d'achat</td><td>${fmt(o.prixAchat)} €</td><td>${fmt(o.prixAchat*o.qteMax)} €</td></tr>
-                    <tr class="tr-section"><td colspan="3">REVENUS LOCATIFS (par jour)</td></tr>
-                    <tr><td>Loyer brut</td><td>+${fmt(o.brut.loyer)} €/j</td><td>+${fmt(o.brut.loyer*o.qteMax)} €/j</td></tr>
-                    <tr><td>Charges</td><td>−${fmt(o.brut.charge)} €/j</td><td>−${fmt(o.brut.charge*o.qteMax)} €/j</td></tr>
-                    <tr><td>Impôts</td><td>−${fmt(o.brut.impot)} €/j</td><td>−${fmt(o.brut.impot*o.qteMax)} €/j</td></tr>
-                    <tr class="${o.cfNet>=0?'tr-gain':'tr-loss'}">
-                        <td>Cashflow net</td>
-                        <td><span class="${cfCls}">${fmtS(o.cfNet,' €/j')}</span></td>
-                        <td><span class="${cfCls}">${fmtS(o.cfNet*o.qteMax,' €/j')}</span></td>
+                    <tr>
+                        <td>Terrain</td>
+                        <td>${fmt(o.brut.pTerrain)} € <span class="pct-badge">${o.pcts.ter}%</span></td>
+                        <td>${fmt(o.brut.pTerrain * o.qteMax)} €</td>
                     </tr>
-                    <tr class="tr-section"><td colspan="3">PROJECTION</td></tr>
-                    <tr><td>Rentable en</td><td colspan="2" style="text-align:right; font-family:'DM Mono',monospace; font-weight:600; color:var(--orange)">${roiStr}</td></tr>
-                    <tr><td>Après amortissement</td><td colspan="2" style="text-align:right; font-family:'DM Mono',monospace; color:var(--green)">${fmtS(o.cfNet*o.qteMax,' €/j')} net pur</td></tr>
+                    <tr>
+                        <td>Construction</td>
+                        <td>${fmt(o.brut.pConst)} € <span class="pct-badge">${o.pcts.con}%</span></td>
+                        <td>${fmt(o.brut.pConst * o.qteMax)} €</td>
+                    </tr>
+                    <tr>
+                        <td>Taxe fixe</td>
+                        <td>1 000 € <span class="pct-badge">${((1000/o.coutTotal)*100).toFixed(1)}%</span></td>
+                        <td>${fmt(1000 * o.qteMax)} €</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--orange)">Déficit chantier <span class="pct-badge">terrain seul</span></td>
+                        <td style="color:var(--orange)">${fmt(o.deficit)} € <span class="pct-badge">${o.pcts.def}%</span></td>
+                        <td style="color:var(--orange)">${fmt(o.deficit * o.qteMax)} €</td>
+                    </tr>
+                    <tr class="tr-note">
+                        <td colspan="3">Pendant ${o.tConstStr} : charges terrain ${fmt(o.brut.tCharge)} €/j + impôts terrain ${fmt(o.brut.tImpot)} €/j</td>
+                    </tr>
+                    <tr class="tr-total">
+                        <td>Coût global sécurisé</td>
+                        <td><strong>${fmt(o.coutTotal)} €</strong> <span class="pct-badge">100%</span></td>
+                        <td><strong>${fmt(o.coutTotal * o.qteMax)} €</strong></td>
+                    </tr>
+
+                    <tr class="tr-section"><td colspan="3">2 · OPTION REVENTE</td></tr>
+                    <tr>
+                        <td>Valeur d'expertise</td>
+                        <td>${fmt(o.brut.vFinale)} €</td>
+                        <td>${fmt(o.brut.vFinale * o.qteMax)} €</td>
+                    </tr>
+                    <tr class="${gUnit >= 0 ? 'tr-gain' : 'tr-loss'}">
+                        <td>Plus-value nette</td>
+                        <td><strong class="${clsG}">${sigG}${fmt(gUnit)} €</strong> <span class="pct-badge">${sigG}${o.pcts.mar}%</span></td>
+                        <td><strong class="${clsG}">${sigG}${fmt(o.gainTotalCumul)} €</strong></td>
+                    </tr>
+
+                    <tr class="tr-section"><td colspan="3">3 · OPTION LOCATION (par jour)</td></tr>
+                    <tr>
+                        <td>Loyer brut</td>
+                        <td>${fmt(o.brut.loyer)} €/j</td>
+                        <td>${fmt(o.brut.loyer * o.qteMax)} €/j</td>
+                    </tr>
+                    <tr>
+                        <td>Charges</td>
+                        <td>−${fmt(o.brut.charge)} €/j</td>
+                        <td>−${fmt(o.brut.charge * o.qteMax)} €/j</td>
+                    </tr>
+                    <tr>
+                        <td>Impôts</td>
+                        <td>−${fmt(o.brut.impot)} €/j</td>
+                        <td>−${fmt(o.brut.impot * o.qteMax)} €/j</td>
+                    </tr>
+                    <tr class="tr-total">
+                        <td>Cashflow net</td>
+                        <td><span class="${cfCls}">${fmtS(o.brut.gainNetLocatif, ' €/j')}</span> <span class="pct-badge">${o.pcts.rnd}%/j</span></td>
+                        <td><span class="${cfCls}">${fmtS(o.brut.gainNetLocatif * o.qteMax, ' €/j')}</span></td>
+                    </tr>
                 </tbody>
             </table>
-        </div>`;
+            <div class="fin-legend">% = part du coût global unitaire (${fmt(o.coutTotal)} €)</div>
+        </div>
+        `;
+
         document.getElementById('modalOverlay').classList.add('open');
         document.body.style.overflow = 'hidden';
     }
 
-    /* ══════════════════════════════════════════════
-       MODAL TAB 3
-    ══════════════════════════════════════════════ */
-    function ouvrirModal3(c) {
-        oppOuverte = c;
-        document.getElementById('modalTitre').textContent = c.nom;
-        document.getElementById('modalSousTitre').textContent = `${c.cat} · Comparaison des stratégies`;
-        const body = document.getElementById('modalBody');
-        const o1 = c.o1, o2 = c.o2;
-        const gCls = o1.gainUnitaire >= 0 ? 't-green' : 't-red';
-        const sigG = o1.gainUnitaire >= 0 ? '+' : '';
-        const cfCls = o2.cfNet >= 0 ? 't-green' : 't-red';
-        const roiStr = o2.roiJours === Infinity ? '∞' : fmt(o2.roiJours) + ' jours';
-        const rendAnnuel = o2.cfNet > 0 ? (o2.rendJour * 365).toFixed(1) + '%/an' : '—';
-        const conWin = c.winner === 'con' || c.winner === 'both';
-        const locWin = c.winner === 'loc' || c.winner === 'both';
-
-        // Conseil détaillé
-        let conseilDetail = '';
-        if (c.winner === 'none') {
-            conseilDetail = `Ce bâtiment est non-rentable dans les deux cas : perte à la revente (<strong>${fmt(o1.gainUnitaire)} €</strong>) et cashflow locatif négatif (<strong>${fmt(o2.cfNet)} €/j</strong>). À éviter absolument.`;
-        } else if (c.winner === 'loc') {
-            conseilDetail = `Acheter pour louer est ici plus avantageux : l'investissement de <strong>${fmt(o2.prixAchat)} €</strong> est remboursé en <strong>${roiStr}</strong>, puis génère <strong>${fmtS(o2.cfNet,' €/j')}</strong> pur. La construction ne génère que <strong>${sigG}${fmt(o1.gainUnitaire)} €</strong> de plus-value.`;
-        } else if (c.winner === 'con') {
-            conseilDetail = `Construire et revendre est plus rentable : <strong>${sigG}${fmt(o1.gainUnitaire)} €</strong> de plus-value sans attendre le délai d'amortissement locatif (${roiStr}).`;
-        } else {
-            conseilDetail = `Les deux stratégies sont comparables. Construire rapporte <strong>${sigG}${fmt(o1.gainUnitaire)} €</strong> de plus-value ; acheter pour louer s'amortit en <strong>${roiStr}</strong>. Choisissez selon votre horizon.`;
-        }
-
-        body.innerHTML = `
-        <div class="reco-block ${c.verdictCls}">
-            <div class="reco-title">${c.verdict}</div>
-            <div class="reco-desc">${conseilDetail}</div>
-        </div>
-        <div class="section">
-            <div class="section-title">🏗️ Construire & Revendre ${conWin ? '★ GAGNANT' : ''}</div>
-            <div class="kpi-grid" style="${conWin ? 'background:var(--green-dim);border-radius:10px;padding:4px;' : ''}">
-                <div class="kpi"><div class="kpi-val">${fmt(o1.coutTotal)} €</div><div class="kpi-lbl">Coût total</div></div>
-                <div class="kpi"><div class="kpi-val ${gCls}">${sigG}${fmt(o1.gainUnitaire)} €</div><div class="kpi-lbl">Plus-value</div></div>
-                <div class="kpi"><div class="kpi-val t-blue">×${o1.qteMax}</div><div class="kpi-lbl">Max achetables</div></div>
-                <div class="kpi"><div class="kpi-val">${o1.tConstStr}</div><div class="kpi-lbl">Délai chantier</div></div>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-title">🏠 Acheter & Louer ${locWin ? '★ GAGNANT' : ''}</div>
-            <div class="kpi-grid" style="${locWin ? 'background:var(--teal-dim);border-radius:10px;padding:4px;' : ''}">
-                <div class="kpi"><div class="kpi-val">${fmt(o2.prixAchat)} €</div><div class="kpi-lbl">Prix d'achat</div></div>
-                <div class="kpi"><div class="kpi-val ${cfCls}">${fmtS(o2.cfNet,' €/j')}</div><div class="kpi-lbl">Cashflow net/j</div></div>
-                <div class="kpi"><div class="kpi-val t-orange">${roiStr}</div><div class="kpi-lbl">Amortissement</div></div>
-                <div class="kpi"><div class="kpi-val t-teal">${rendAnnuel}</div><div class="kpi-lbl">Rendement/an</div></div>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-title">Charges & Impôts (location)</div>
-            <table class="fin-table">
-                <thead><tr><th>Poste</th><th>Par jour</th></tr></thead>
-                <tbody>
-                    <tr><td>Loyer brut</td><td>+${fmt(o2.brut.loyer)} €/j</td></tr>
-                    <tr><td>Charges</td><td>−${fmt(o2.brut.charge)} €/j</td></tr>
-                    <tr><td>Impôts</td><td>−${fmt(o2.brut.impot)} €/j</td></tr>
-                    <tr class="${o2.cfNet>=0?'tr-gain':'tr-loss'}"><td>Net</td><td><span class="${cfCls}">${fmtS(o2.cfNet,' €/j')}</span></td></tr>
-                </tbody>
-            </table>
-        </div>`;
-        document.getElementById('modalOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    /* ══════════════════════════════════════════════
-       FERMER MODAL
-    ══════════════════════════════════════════════ */
     function fermerModal(e) {
         if (e && e.target !== document.getElementById('modalOverlay')) return;
         document.getElementById('modalOverlay').classList.remove('open');
         document.body.style.overflow = '';
         oppOuverte = null;
     }
+
+    // Fermer avec Escape
     document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerModal(); });
 
     /* ══════════════════════════════════════════════
-       CHANGEMENT TERRAIN
+       CHANGEMENT TERRAIN (depuis la modale)
     ══════════════════════════════════════════════ */
     function changerTerrain(nomBat, idx) {
         choixTerrain[nomBat] = parseInt(idx);
-        dataCache = null;
+        dataCache = null; // force recalcul (le cache d'API reste mais pas les opps)
+        const strat   = document.getElementById('strategieSelect').value;
+        const inclEnt = document.getElementById('entrepriseCheck').checked;
         fermerModal();
         analyser(false).then(() => {
-            const updated = opps1.find(o => o.nom === nomBat);
-            if (updated) ouvrirModal1(updated);
+            // Ré-ouvrir la fiche mise à jour
+            const updated = opps.find(o => o.nom === nomBat);
+            if (updated) ouvrirModal(updated);
         });
     }
 </script>
 </body>
 </html>
-
-
