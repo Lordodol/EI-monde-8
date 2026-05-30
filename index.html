@@ -2,1397 +2,1628 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmpireImmo — Simulateur Tactique Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EmpireImmo — Conseiller Tactique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Familjen+Grotesk:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        /* ══════════════════════════════════════════════
+           TOKENS
+        ══════════════════════════════════════════════ */
         :root {
-            --fond-sombre:   #080d17;
-            --fond-carte:    #0f1826;
-            --fond-input:    #060a12;
-            --fond-hover:    #1a2540;
-            --fond-detail:   #060a12;
-            --texte-blanc:   #eef2ff;
-            --texte-gris:    #6b7fa3;
-            --texte-dim:     #3d4f6e;
-            --bleu-flash:    #38bdf8;
-            --bleu-glow:     rgba(56, 189, 248, 0.18);
-            --bleu-survol:   #0ea5e9;
-            --vert-gain:     #34d399;
-            --vert-glow:     rgba(52, 211, 153, 0.15);
-            --rouge-perte:   #fb7185;
-            --rouge-glow:    rgba(251, 113, 133, 0.12);
-            --orange-badge:  #fbbf24;
-            --violet-badge:  #a78bfa;
-            --bordure:       #1a2540;
-            --bordure-vive:  #243357;
-            --radius:        10px;
-            --radius-lg:     16px;
+            --bg:          #F5F3EE;
+            --bg2:         #FFFFFF;
+            --bg3:         #EDEAE3;
+            --panel-dark:  #1C2340;
+            --panel-dark2: #141929;
+            --surface:     #FFFFFF;
+            --input-dark:  #252D4A;
+            --border:      #E0DDD5;
+            --border-dark: rgba(255,255,255,0.10);
+            --text:        #1A1A2E;
+            --text-2:      #6B6880;
+            --text-3:      #A8A5B5;
+            --text-inv:    #FFFFFF;
+            --text-inv2:   rgba(255,255,255,0.60);
+            --blue:        #2563EB;
+            --blue-dim:    rgba(37,99,235,0.10);
+            --green:       #059669;
+            --green-dim:   rgba(5,150,105,0.10);
+            --red:         #DC2626;
+            --red-dim:     rgba(220,38,38,0.09);
+            --orange:      #D97706;
+            --orange-dim:  rgba(217,119,6,0.10);
+            --violet:      #7C3AED;
+            --violet-dim:  rgba(124,58,237,0.10);
+            --r:           16px;
+            --r-sm:        10px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Syne', system-ui, sans-serif;
-            background: var(--fond-sombre);
-            color: var(--texte-blanc);
-            padding: 12px;
-            line-height: 1.5;
-            min-height: 100vh;
-            background-image:
-                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(56,189,248,0.06) 0%, transparent 70%);
+            font-family: 'Lexend', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ─── Conteneur principal ─── */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* ─── Header ─── */
+        /* ══════════════════════════════════════════════
+           HEADER
+        ══════════════════════════════════════════════ */
         .header {
-            text-align: center;
-            padding: 28px 20px 24px;
+            background: var(--panel-dark);
+            padding: 18px 18px 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-
-        .header-tag {
-            display: inline-block;
-            font-family: 'JetBrains Mono', monospace;
+        .header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 18px;
+        }
+        .header-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'DM Mono', monospace;
             font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            color: var(--bleu-flash);
-            text-transform: uppercase;
-            background: var(--bleu-glow);
-            border: 1px solid rgba(56,189,248,0.2);
-            padding: 3px 10px;
+            font-weight: 400;
+            color: var(--text-inv2);
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 4px 10px;
             border-radius: 20px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
         }
+        .header-pill::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: #4ADE80;
+            border-radius: 50%;
+            animation: blink 2s ease infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
         h1 {
-            font-size: clamp(22px, 5vw, 34px);
-            font-weight: 800;
-            color: var(--texte-blanc);
+            font-family: 'Familjen Grotesk', sans-serif;
+            font-size: clamp(24px, 6.5vw, 34px);
+            font-weight: 700;
+            color: var(--text-inv);
             letter-spacing: -0.5px;
-            line-height: 1.15;
+            line-height: 1.05;
+        }
+        h1 em { font-style: italic; color: rgba(255,255,255,0.45); }
+        .subtitle {
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--text-inv2);
+            margin-top: 5px;
+            letter-spacing: 0.2px;
+        }
+        .header-icon {
+            font-size: 36px;
+            line-height: 1;
+            flex-shrink: 0;
+            opacity: 0.25;
+            margin-top: 4px;
         }
 
-        h1 span { color: var(--bleu-flash); }
-
-        p.subtitle {
-            color: var(--texte-gris);
-            margin-top: 8px;
-            font-size: 13px;
-            font-weight: 400;
-        }
-
-        /* ─── Zone outils ─── */
-        .zone-outils {
+        /* Tab strip at bottom of header */
+        .header-tabs {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: var(--fond-carte);
-            border: 1px solid var(--bordure-vive);
-            padding: 16px;
-            border-radius: var(--radius-lg);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin: 0 -18px;
         }
-
-        .outils-row {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .groupe-saisie {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        .header-tab {
             flex: 1;
+            padding: 11px 4px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-inv2);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .header-tab.active {
+            color: var(--text-inv);
+            border-bottom-color: #60A5FA;
         }
 
-        label {
-            font-family: 'JetBrains Mono', monospace;
+        /* ══════════════════════════════════════════════
+           PANNEAU CONFIG (dark inverted)
+        ══════════════════════════════════════════════ */
+        .panel-config {
+            padding: 16px 18px 18px;
+            background: var(--panel-dark2);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .config-grid .full { grid-column: 1 / -1; }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .field label {
             font-size: 10px;
-            font-weight: 600;
-            color: var(--texte-gris);
+            font-weight: 700;
+            color: var(--text-inv2);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        input[type="text"],
-        .selecteur-strategie {
-            padding: 11px 14px;
-            font-size: 15px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
-            background-color: var(--fond-input);
-            border: 1.5px solid var(--bordure-vive);
-            border-radius: var(--radius);
-            color: var(--texte-blanc);
-            outline: none;
+        input[type="text"], select {
             width: 100%;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            padding: 12px 14px;
+            font-size: 16px;
+            font-family: 'DM Mono', monospace;
+            font-weight: 500;
+            background: var(--input-dark);
+            border: 1.5px solid rgba(255,255,255,0.10);
+            border-radius: var(--r-sm);
+            color: #FFFFFF;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: border-color 0.18s, box-shadow 0.18s;
         }
+        input::placeholder { color: rgba(255,255,255,0.25); }
+        input:focus, select:focus {
+            border-color: rgba(96,165,250,0.6);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+        }
+        select option { background: #1C2340; color: #fff; }
 
-        input:focus, .selecteur-strategie:focus {
-            border-color: var(--bleu-flash);
-            box-shadow: 0 0 0 3px var(--bleu-glow);
-        }
-
-        /* Filtre texte */
-        .input-filtre {
-            position: relative;
-        }
-        .input-filtre input {
-            padding-left: 36px;
-            font-family: 'Syne', system-ui, sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .input-filtre::before {
-            content: "🔍";
+        .select-wrap { position: relative; }
+        .select-wrap::after {
+            content: '▾';
             position: absolute;
-            left: 11px;
+            right: 13px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 13px;
+            color: rgba(255,255,255,0.35);
             pointer-events: none;
+            font-size: 14px;
+        }
+        .select-wrap select {
+            padding-right: 36px;
+            cursor: pointer;
+            font-family: 'Lexend', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        /* Checkbox custom */
-        .groupe-case {
+        /* Toggle entreprise */
+        .toggle-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
+            background: var(--input-dark);
+            border: 1.5px solid rgba(255,255,255,0.10);
+            border-radius: var(--r-sm);
+            padding: 11px 14px;
             cursor: pointer;
-            padding: 10px 14px;
-            background: var(--fond-input);
-            border: 1.5px solid var(--bordure-vive);
-            border-radius: var(--radius);
-            transition: border-color 0.2s;
             user-select: none;
+            gap: 10px;
+            min-height: 50px;
+            transition: border-color 0.18s;
         }
-        .groupe-case:hover { border-color: var(--bleu-flash); }
-        .groupe-case input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--bleu-flash);
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        .groupe-case .check-label {
+        .toggle-row:active { opacity: 0.8; }
+        .toggle-text {
             font-size: 13px;
             font-weight: 700;
-            color: var(--texte-blanc);
+            color: #FFFFFF;
         }
+        .toggle-text small {
+            display: block;
+            font-size: 10px;
+            font-weight: 300;
+            color: var(--text-inv2);
+            margin-top: 1px;
+        }
+        .toggle-switch {
+            width: 46px;
+            height: 26px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 13px;
+            position: relative;
+            flex-shrink: 0;
+            transition: background 0.22s;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.22s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+        }
+        #entrepriseCheck:checked ~ .toggle-row .toggle-switch,
+        .toggle-switch.on { background: #3B82F6; }
+        .toggle-switch.on::after { transform: translateX(20px); }
 
-        /* Bouton */
-        .btn-calculer {
-            padding: 13px 28px;
-            font-size: 14px;
-            font-weight: 800;
-            font-family: 'Syne', sans-serif;
-            letter-spacing: 0.5px;
-            background: var(--bleu-flash);
-            color: #060a12;
+        /* Bouton calculer */
+        .btn-calc {
+            width: 100%;
+            padding: 15px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Lexend', sans-serif;
+            background: #3B82F6;
+            color: #FFFFFF;
             border: none;
-            border-radius: var(--radius);
+            border-radius: var(--r-sm);
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-            white-space: nowrap;
-        }
-        .btn-calculer:hover {
-            background: var(--bleu-survol);
-            color: white;
-            box-shadow: 0 0 20px var(--bleu-glow);
-        }
-        .btn-calculer:active { transform: scale(0.97); }
-
-        /* ─── Status ─── */
-        #etat-chargement {
+            letter-spacing: 0.3px;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--texte-gris);
-            margin-bottom: 16px;
-            min-height: 30px;
+            gap: 8px;
+            min-height: 52px;
         }
-
-        .spinner {
+        .btn-calc:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-calc .spinner-btn {
             display: none;
-            width: 14px;
-            height: 14px;
-            border: 2px solid var(--bordure-vive);
-            border-top-color: var(--bleu-flash);
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #FFFFFF;
             border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            flex-shrink: 0;
+            animation: spin 0.65s linear infinite;
         }
-        .spinner.actif { display: block; }
-
+        .btn-calc.loading .spinner-btn { display: block; }
+        .btn-calc.loading .btn-text { display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Compteur résultats */
-        .barre-resultats {
+        /* ══════════════════════════════════════════════
+           BARRE RÉSULTATS / FILTRE
+        ══════════════════════════════════════════════ */
+        .bar-results {
             display: none;
+            padding: 10px 14px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            gap: 10px;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 0 2px;
         }
-        .barre-resultats.visible { display: flex; }
-        .compteur {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--texte-gris);
+        .bar-results.visible { display: flex; }
+        .bar-results .search-wrap {
+            flex: 1;
+            position: relative;
         }
-        .compteur strong { color: var(--bleu-flash); }
-
-        /* ─── Tableau ─── */
-        .conteneur-tableau {
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--bordure-vive);
-            background: var(--fond-carte);
-            overflow: hidden;
+        .bar-results .search-wrap::before {
+            content: '⌕';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            font-size: 18px;
+            pointer-events: none;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .bar-results input {
+            padding: 9px 12px 9px 36px;
+            font-size: 14px;
+            font-family: 'Lexend', sans-serif;
+            background: var(--bg3);
+            color: var(--text);
+            border-color: var(--border);
+            border-radius: 24px;
         }
-
-        th, td {
-            padding: 11px 12px;
-            border-bottom: 1px solid var(--bordure);
-            text-align: left;
+        .bar-results input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
+        .cpt-results {
+            font-family: 'DM Mono', monospace;
             font-size: 12px;
+            color: var(--text-2);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
+        .cpt-results b { color: var(--blue); }
 
-        thead tr {
-            background: var(--fond-sombre);
+        /* ══════════════════════════════════════════════
+           STATUS
+        ══════════════════════════════════════════════ */
+        .status-bar {
+            text-align: center;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
         }
+        .spinner {
+            display: none;
+            width: 16px; height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.65s linear infinite;
+            flex-shrink: 0;
+        }
+        .spinner.on { display: block; }
 
-        th {
-            font-family: 'JetBrains Mono', monospace;
+        /* ══════════════════════════════════════════════
+           TRI
+        ══════════════════════════════════════════════ */
+        .sort-btn { background: none; border: none; cursor: pointer; color: var(--text-2); padding: 0; font-family: inherit; font-size: inherit; display: inline-flex; align-items: center; gap: 4px; }
+        .sort-btn.active { color: var(--blue); }
+        .sort-bar {
+            display: none;
+            padding: 8px 14px;
+            gap: 6px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg2);
+            align-items: center;
+        }
+        .sort-bar.visible { display: flex; }
+        .sort-bar-label {
             font-size: 10px;
             font-weight: 700;
-            color: var(--texte-gris);
+            color: var(--text-3);
             text-transform: uppercase;
             letter-spacing: 0.8px;
+        }
+        .sort-pill {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 13px;
+            border-radius: 20px;
             cursor: pointer;
-            white-space: nowrap;
-            user-select: none;
-            transition: color 0.15s;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            color: var(--text-2);
+            transition: all 0.15s;
+            -webkit-tap-highlight-color: transparent;
         }
-        th:hover { color: var(--bleu-flash); }
-        th.tri-actif { color: var(--bleu-flash); }
-        th .sort-icon { margin-left: 4px; opacity: 0.5; }
-        th.tri-actif .sort-icon { opacity: 1; }
-
-        tr.ligne-principale {
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        tr.ligne-principale:hover {
-            background-color: var(--fond-hover);
-        }
-        tr.ligne-principale td:first-child {
-            border-left: 3px solid transparent;
-            transition: border-color 0.15s;
-        }
-        tr.ligne-principale:hover td:first-child,
-        tr.ligne-principale.ouvert td:first-child {
-            border-left-color: var(--bleu-flash);
+        .sort-pill.active {
+            background: var(--blue-dim);
+            border-color: rgba(37,99,235,0.3);
+            color: var(--blue);
         }
 
-        .nom-cliquable {
-            color: var(--texte-blanc);
-            font-weight: 700;
-            font-size: 13px;
+        /* ══════════════════════════════════════════════
+           CARDS LISTE
+        ══════════════════════════════════════════════ */
+        .cards-list {
+            padding: 10px 14px 100px;
         }
-
-        .nom-chevron {
-            color: var(--texte-dim);
-            font-size: 10px;
-            margin-right: 6px;
-            transition: transform 0.2s;
-            display: inline-block;
-        }
-        tr.ligne-principale.ouvert .nom-chevron {
-            transform: rotate(90deg);
-            color: var(--bleu-flash);
-        }
-
-        .type-sous-titre {
-            display: block;
-            font-size: 10px;
-            color: var(--texte-gris);
-            font-weight: 400;
-            margin-top: 2px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .badge-conseil {
-            display: inline-block;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-            margin-top: 4px;
-        }
-
-        /* Détails */
-        .ligne-details {
-            background-color: var(--fond-detail);
-            display: none;
-        }
-        .ligne-details.visible {
-            display: table-row;
-        }
-
-        .boite-details {
-            padding: 12px 10px;
-            border-left: 3px solid var(--bleu-flash);
-            animation: slideDown 0.2s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .boite-details h4 {
-            margin: 0 0 12px 0;
-            color: var(--texte-blanc);
-            border-bottom: 1px solid var(--bordure-vive);
-            padding-bottom: 8px;
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        /* Bloc résumé rapide */
-        .recap-rapide {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-        @media (min-width: 480px) {
-            .recap-rapide { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (min-width: 700px) {
-            .recap-rapide { grid-template-columns: repeat(6, 1fr); }
-        }
-        .recap-card {
-            background: var(--fond-carte);
-            border: 1px solid var(--bordure-vive);
-            border-radius: 8px;
-            padding: 10px 12px;
+        .empty-state {
             text-align: center;
+            padding: 60px 20px;
+            color: var(--text-3);
+            font-size: 13px;
+            line-height: 2;
         }
-        .recap-card .rc-val {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
+
+        .rank-sep {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 2px 8px;
+            font-size: 11px;
             font-weight: 700;
-            color: var(--texte-blanc);
-        }
-        .recap-card .rc-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            color: var(--texte-gris);
+            color: var(--text-2);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
+        }
+        .rank-sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        /* Card principale */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--border);
+            border-radius: var(--r);
+            margin-bottom: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.12s, box-shadow 0.18s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .card:active { transform: scale(0.985); box-shadow: none; }
+
+        /* Couleur de bordure gauche selon recommandation */
+        .card:has(.card-badge.c-green)  { border-left-color: var(--green); }
+        .card:has(.card-badge.c-blue)   { border-left-color: var(--blue); }
+        .card:has(.card-badge.c-orange) { border-left-color: var(--orange); }
+        .card:has(.card-badge.c-violet) { border-left-color: var(--violet); }
+        .card:has(.card-badge.c-red)    { border-left-color: var(--red); }
+
+        .card-main {
+            padding: 14px 14px 12px 14px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 4px 10px;
+            align-items: start;
+            position: relative;
+        }
+
+        .card-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.25;
+            word-break: break-word;
+        }
+        .card-type {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-3);
             margin-top: 3px;
         }
 
-        /* Bloc plan */
-        .bloc-plan {
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .card-metrics {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 11px;
+            border-top: 1px solid var(--border);
+        }
+        .metric-chip {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            background: var(--fond-sombre);
-            border: 1px solid var(--bordure-vive);
-            padding: 10px 12px;
+            align-items: center;
+            background: var(--bg);
             border-radius: 8px;
-            margin-bottom: 14px;
-            font-size: 12px;
+            padding: 8px 4px;
+            gap: 3px;
         }
-        .bloc-plan-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .bloc-plan-row strong { color: var(--texte-gris); font-size: 10px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
-
-        /* Selecteur terrain */
-        .selecteur-terrain {
-            padding: 8px 10px;
-            border: 1.5px solid var(--bordure-vive);
-            border-radius: 6px;
-            font-weight: 600;
-            background: var(--fond-input);
-            color: var(--texte-blanc);
-            cursor: pointer;
-            outline: none;
-            margin-top: 4px;
-            width: 100%;
-            font-family: 'JetBrains Mono', monospace;
+        .metric-chip .val {
+            font-family: 'DM Mono', monospace;
             font-size: 12px;
-            transition: border-color 0.2s;
-        }
-        .selecteur-terrain:focus { border-color: var(--bleu-flash); }
-
-        /* Badges */
-        .badge-quantite {
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(56,189,248,0.1);
-            color: var(--bleu-flash);
-            border: 1px solid rgba(56,189,248,0.2);
-            padding: 3px 7px;
-            border-radius: 5px;
-            font-weight: 700;
+            font-weight: 500;
+            color: var(--text);
             white-space: nowrap;
-            font-size: 12px;
         }
-
-        .badge-temps {
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(251,191,36,0.1);
-            color: var(--orange-badge);
-            border: 1px solid rgba(251,191,36,0.2);
-            padding: 3px 7px;
-            border-radius: 5px;
-            font-weight: 700;
-            white-space: nowrap;
-            font-size: 11px;
-        }
-
-        .badge-terrain-auto {
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(167,139,250,0.08);
-            color: var(--violet-badge);
-            border: 1px solid rgba(167,139,250,0.15);
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-weight: 700;
-            display: inline-block;
-            font-size: 10px;
-        }
-
-        .badge-pct {
-            font-family: 'JetBrains Mono', monospace;
+        .metric-chip .lbl {
             font-size: 9px;
-            color: var(--texte-gris);
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--bordure);
-            padding: 1px 5px;
-            border-radius: 3px;
-            margin-left: 4px;
-            font-weight: 600;
-        }
-
-        .texte-gain  { font-weight: 700; color: var(--vert-gain); font-family: 'JetBrains Mono', monospace; }
-        .texte-perte { font-weight: 700; color: var(--rouge-perte); font-family: 'JetBrains Mono', monospace; }
-        .texte-neutre { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
-
-        /* Table interne */
-        .table-details {
-            width: 100%;
-            border-collapse: collapse;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--bordure-vive);
-        }
-        .table-details th {
-            background: #0a1120;
-            color: var(--bleu-flash);
-            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-3);
             text-transform: uppercase;
-            padding: 9px 10px;
-            border-bottom: 1px solid var(--bordure-vive);
-            cursor: default;
+            letter-spacing: 0.2px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .card-tap-hint {
+            text-align: center;
+            padding: 7px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-3);
+            background: var(--bg);
+            border-top: 1px solid var(--border);
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
-        .table-details th:hover { color: var(--bleu-flash); }
-        .table-details td {
-            padding: 9px 10px;
-            font-size: 11px;
-            border-bottom: 1px solid var(--bordure);
-            color: #c8d3e8;
-            font-family: 'JetBrains Mono', monospace;
+
+        /* Séparateur rang */
+        .rank-sep::before { display: none; }
+
+        /* TOP 3 */
+        .card-top {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
         }
-        .table-details td:first-child {
-            font-family: 'Syne', sans-serif;
+        .top-rank {
+            position: absolute;
+            top: 0; right: 14px;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            background: var(--panel-dark);
+            color: rgba(255,255,255,0.75);
+            padding: 3px 10px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .card-name-row {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        /* Bouton pertes sèches */
+        .btn-toggle-pertes {
+            width: 100%;
+            padding: 12px;
             font-size: 12px;
-            color: var(--texte-gris);
+            font-weight: 600;
+            font-family: 'Lexend', sans-serif;
+            color: var(--text-3);
+            background: var(--bg2);
+            border: 1.5px dashed var(--border);
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.15s;
         }
-        .table-details .section-titre {
-            background: var(--fond-sombre);
-            font-family: 'JetBrains Mono', monospace;
+        .btn-toggle-pertes:active { color: var(--text-2); }
+
+        .rank-sep-loss::after { display: none; }
+        .rank-sep-loss::before { display: none; }
+
+        /* ══════════════════════════════════════════════
+           COULEURS SÉMANTIQUES
+        ══════════════════════════════════════════════ */
+        .c-green  { background: var(--green-dim);  color: var(--green); }
+        .c-blue   { background: var(--blue-dim);   color: var(--blue); }
+        .c-orange { background: var(--orange-dim); color: var(--orange); }
+        .c-violet { background: var(--violet-dim); color: var(--violet); }
+        .c-red    { background: var(--red-dim);    color: var(--red); }
+        .t-green  { color: var(--green); }
+        .t-red    { color: var(--red); }
+        .t-blue   { color: var(--blue); }
+        .t-orange { color: var(--orange); }
+
+        /* ══════════════════════════════════════════════
+           MODAL FICHE
+        ══════════════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10,15,35,0.6);
+            z-index: 100;
+            backdrop-filter: blur(6px);
+            overscroll-behavior: contain;
+        }
+        .modal-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
+        @media (min-width: 600px) { .modal-overlay.open { align-items: center; } }
+
+        .modal {
+            background: var(--bg);
+            border-radius: 22px 22px 0 0;
+            width: 100%;
+            max-width: 560px;
+            max-height: 92dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+        }
+        @media (min-width: 600px) { .modal { border-radius: 22px; } }
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .modal-handle {
+            width: 40px; height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 12px auto 0;
+            flex-shrink: 0;
+        }
+
+        .modal-header {
+            padding: 14px 18px 14px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--bg2);
+        }
+        .modal-header-info { flex: 1; min-width: 0; }
+        .modal-title {
+            font-family: 'Familjen Grotesk', sans-serif;
+            font-size: 18px;
             font-weight: 700;
-            color: var(--texte-dim);
-            font-size: 9px;
+            color: var(--text);
+            line-height: 1.2;
+            word-break: break-word;
+        }
+        .modal-subtitle {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-2);
+            margin-top: 4px;
+        }
+        .modal-close {
+            width: 36px; height: 36px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-2);
+            font-size: 20px;
+            flex-shrink: 0;
+            line-height: 1;
+            transition: background 0.15s;
+        }
+        .modal-close:active { background: var(--border); }
+
+        .modal-body {
+            overflow-y: auto;
+            flex: 1;
+            padding: 16px 16px 28px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        /* Sections dans la modale */
+        .section { margin-bottom: 20px; }
+        .section-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-3);
             text-transform: uppercase;
             letter-spacing: 1px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
         }
-        .table-details .total-brut {
-            background: #0a1525;
-            font-weight: 700;
-        }
-        .table-details .total-brut td:first-child {
-            color: var(--texte-blanc);
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-        }
-        .table-details .gain-sub  { background: var(--vert-glow); }
-        .table-details .perte-sub { background: var(--rouge-glow); }
 
-        .explication-formule {
+        /* Bloc recommandation */
+        .reco-block {
+            border-radius: var(--r-sm);
+            padding: 14px 15px;
+            margin-bottom: 18px;
+            border-left: 4px solid transparent;
+        }
+        .reco-block.c-green  { border-left-color: var(--green);  }
+        .reco-block.c-blue   { border-left-color: var(--blue);   }
+        .reco-block.c-orange { border-left-color: var(--orange); }
+        .reco-block.c-violet { border-left-color: var(--violet); }
+        .reco-block.c-red    { border-left-color: var(--red);    }
+
+        .reco-title {
+            font-family: 'Familjen Grotesk', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 7px;
+            color: var(--text);
+        }
+        .reco-desc {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.65;
+        }
+        .reco-desc strong { color: var(--text); font-weight: 700; }
+
+        /* KPI grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .kpi {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 13px 12px;
+        }
+        .kpi .kpi-val {
+            font-family: 'DM Mono', monospace;
+            font-size: 17px;
+            font-weight: 500;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .kpi .kpi-lbl {
             font-size: 10px;
-            color: #3d4f6e;
-            text-align: center;
-            font-style: italic;
-            padding: 6px 10px !important;
-            background: var(--fond-sombre);
-            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
-        /* Ligne zéro résultat */
-        .aucun-resultat {
-            text-align: center;
-            padding: 30px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--texte-gris);
+        /* Tableau financier */
+        .fin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            overflow: hidden;
+        }
+        .fin-table thead th {
+            background: var(--panel-dark);
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 10px 11px;
+            text-align: left;
+        }
+        .fin-table tbody tr { border-bottom: 1px solid var(--border); }
+        .fin-table tbody tr:last-child { border-bottom: none; }
+        .fin-table td { padding: 10px 11px; vertical-align: middle; }
+        .fin-table td:not(:first-child) {
+            font-family: 'DM Mono', monospace;
             font-size: 12px;
+            font-weight: 500;
+            text-align: right;
+        }
+        .fin-table td:first-child { color: var(--text-2); font-size: 13px; }
+        .fin-table .tr-section td {
+            background: var(--bg3);
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 7px 11px;
+        }
+        .fin-table .tr-total td { background: var(--bg3); font-weight: 700; }
+        .fin-table .tr-total td:first-child { color: var(--text); }
+        .fin-table .tr-gain { background: rgba(5,150,105,0.04); }
+        .fin-table .tr-loss { background: rgba(220,38,38,0.04); }
+        .fin-table .tr-note td {
+            font-size: 11px;
+            color: var(--text-3);
+            font-style: italic;
+            text-align: center;
+            background: var(--bg);
         }
 
-        /* ─── Responsive ─── */
-
-        /* Mobile first - everything below is base (mobile) */
-        
-        /* On mobile: hide ROI column, show only key info */
-        .col-roi-mobile { display: none; }
-        
-        /* Reduce padding on small screens */
-        th, td { padding: 9px 8px; }
-
-        /* Table: allow horizontal scroll on very small phones */
-        .conteneur-tableau {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        /* Terrain dans modale */
+        .terrain-block {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 13px;
+            margin-bottom: 14px;
         }
-
-        /* Make table min-width so it doesn't crush too much */
-        #resultsTable { min-width: 280px; }
-
-        /* Badge conseil wraps on mobile */
-        .badge-conseil { 
-            font-size: 9px; 
-            padding: 2px 5px;
+        .terrain-block label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-2);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
             display: block;
-            margin-top: 3px;
-            width: fit-content;
+            margin-bottom: 8px;
+        }
+        .badge-terrain-fixe {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--violet-dim);
+            color: var(--violet);
+            border: 1px solid rgba(124,58,237,0.15);
+            padding: 6px 12px;
+            border-radius: 8px;
         }
 
-        /* Nom cliquable tighter on mobile */
-        .nom-cliquable { font-size: 12px; }
-        .type-sous-titre { font-size: 9px; }
-
-        /* Detail box tighter on mobile */
-        .boite-details { padding: 10px 8px; }
-        .table-details td { font-size: 10px; padding: 7px 8px; }
-        .table-details td:first-child { font-size: 10px; }
-
-        @media (min-width: 480px) {
-            body { padding: 14px 12px; }
-            .col-roi-mobile { display: table-cell; }
-            th, td { padding: 10px 10px; }
-            .nom-cliquable { font-size: 13px; }
+        /* Barre ROI */
+        .roi-bar-wrap {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 14px;
+            margin-bottom: 8px;
+        }
+        .roi-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .roi-bar-label .name { color: var(--text-2); }
+        .roi-bar-label .val { color: var(--orange); font-family: 'DM Mono', monospace; }
+        .roi-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .roi-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--blue));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .roi-formula {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-3);
+            text-align: center;
+            margin-top: 10px;
         }
 
-        @media (min-width: 600px) {
-            body { padding: 20px 16px; }
-            .outils-row { flex-direction: row; align-items: flex-end; flex-wrap: wrap; }
-            .groupe-saisie { flex: 1; min-width: 150px; }
-            .btn-calculer { width: auto; }
-            th, td { font-size: 12px; padding: 11px 12px; }
+        /* % badges */
+        .pct-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--text-3);
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .th-pct {
+            font-size: 9px; opacity: 0.6; font-weight: 400;
+            margin-left: 3px; letter-spacing: 0; text-transform: none;
+        }
+        .fin-legend {
+            font-size: 10px;
+            color: var(--text-3);
+            text-align: center;
+            padding: 8px 10px;
+            font-style: italic;
         }
 
+        /* ══════════════════════════════════════════════
+           ANIMATION ENTRÉE CARDS
+        ══════════════════════════════════════════════ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .card { animation: fadeInUp 0.22s ease both; }
+
+        /* ══════════════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════════════ */
+        @media (min-width: 540px) {
+            .config-grid { grid-template-columns: 1fr 1fr 1fr; }
+            .config-grid .full { grid-column: 1 / -1; }
+            .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+        }
         @media (min-width: 900px) {
-            body { padding: 28px 20px; }
-            h1 { font-size: 32px; }
-            th, td { font-size: 13px; padding: 13px 15px; }
-            .nom-cliquable { font-size: 14px; }
-            .boite-details { padding: 18px; }
-            .table-details td { font-size: 12px; padding: 10px 12px; }
-            .table-details td:first-child { font-size: 13px; }
+            .header { padding: 24px 24px 0; }
+            .panel-config { padding: 20px 24px 22px; }
+            .cards-list { padding: 10px 20px 80px; }
+            .modal-body { padding: 20px 22px 32px; }
         }
 
-        /* ─── Touch targets ─── */
-        @media (max-width: 600px) {
-            .btn-calculer { 
-                padding: 14px 20px;
-                font-size: 15px;
-                width: 100%;
-            }
-            .groupe-case {
-                padding: 12px 14px;
-            }
-            .groupe-case input[type="checkbox"] {
-                width: 22px;
-                height: 22px;
-            }
-            input[type="text"], .selecteur-strategie {
-                padding: 13px 14px;
-                font-size: 16px; /* Prevent iOS zoom */
-            }
-            .input-filtre input {
-                font-size: 16px; /* Prevent iOS zoom */
-                padding: 13px 14px 13px 38px;
-            }
-            /* Hide performance header text, show icon only on small screens */
-            th .th-label-long { display: none; }
-            th .th-label-short { display: inline; }
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .cards-list { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+            .modal { padding-bottom: env(safe-area-inset-bottom); }
         }
-        @media (min-width: 601px) {
-            th .th-label-long { display: inline; }
-            th .th-label-short { display: none; }
-        }
+
+        .highlight { box-shadow: 0 0 0 2px var(--blue-dim); }
     </style>
 </head>
 <body>
-<div class="container">
 
-    <!-- Header -->
-    <div class="header">
-        <div class="header-tag">EMPIRE IMMO · SIMULATEUR PRO</div>
-        <h1>Conseiller <span>Tactique</span></h1>
-        <p class="subtitle">Analyse stratégique avec déficit de chantier · Classement par gain/jour · Données en temps réel</p>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-top">
+        <div>
+            <div class="header-pill">Empire Immo · Simulateur Pro</div>
+            <h1>Conseiller <em>Tactique</em></h1>
+            <p class="subtitle">Analyse stratégique · Données en temps réel</p>
+        </div>
+        <div class="header-icon">🏢</div>
     </div>
+    <div class="header-tabs">
+        <div class="header-tab active">Analyse</div>
+        <div class="header-tab" style="pointer-events:none;opacity:0.35">Portefeuille</div>
+        <div class="header-tab" style="pointer-events:none;opacity:0.35">Historique</div>
+    </div>
+</div>
 
-    <!-- Zone outils -->
-    <div class="zone-outils">
-        <div class="outils-row">
-            <div class="groupe-saisie">
-                <label for="budgetInput">Capital disponible (€)</label>
-                <input type="text" id="budgetInput" value="1 000 000" autocomplete="off">
-            </div>
-            <div class="groupe-saisie">
-                <label for="strategieSelect">Objectif prioritaire</label>
-                <select id="strategieSelect" class="selecteur-strategie" onchange="analyserStrategieAmortissement(false)">
-                    <option value="plusvalue">🚀 Max Plus-value (Revente)</option>
-                    <option value="cashflow">💰 Max Rente Nette</option>
-                    <option value="roi">⏱️ Amortissement Rapide</option>
+<!-- CONFIG -->
+<div class="panel-config">
+    <div class="config-grid">
+        <div class="field">
+            <label for="budgetInput">Capital (€)</label>
+            <input type="text" id="budgetInput" value="1 000 000" inputmode="numeric" autocomplete="off">
+        </div>
+
+        <div class="field">
+            <label for="strategieSelect">Objectif</label>
+            <div class="select-wrap">
+                <select id="strategieSelect" onchange="relancer()">
+                    <option value="plusvalue">🚀 Plus-value</option>
+                    <option value="cashflow">💰 Rente nette</option>
+                    <option value="roi">⏱️ ROI rapide</option>
                 </select>
             </div>
-            <div class="groupe-saisie" style="flex: 0 0 auto;">
-                <label>&nbsp;</label>
-                <label class="groupe-case">
-                    <input type="checkbox" id="entrepriseCheck" checked onchange="analyserStrategieAmortissement(false)">
-                    <span class="check-label">🏢 Entreprises</span>
-                </label>
-            </div>
-            <div class="groupe-saisie" style="flex: 0 0 auto;">
-                <label>&nbsp;</label>
-                <button class="btn-calculer" onclick="analyserStrategieAmortissement(true)">Calculer →</button>
-            </div>
         </div>
 
-        <!-- Filtre par nom -->
-        <div class="input-filtre">
-            <input type="text" id="filtreNom" placeholder="Filtrer les bâtiments par nom…" oninput="filtrerTableau()" style="font-size:13px;">
+        <div class="field">
+            <label>&nbsp;</label>
+            <label class="toggle-row" for="entrepriseCheck" id="toggleLabel">
+                <div>
+                    <span class="toggle-text">Entreprises</span>
+                </div>
+                <input type="checkbox" id="entrepriseCheck" checked style="display:none" onchange="relancer()">
+                <div class="toggle-switch on" id="toggleSwitch"></div>
+            </label>
+        </div>
+
+        <div class="field full">
+            <button class="btn-calc" id="btnCalc" onclick="analyser(true)">
+                <span class="btn-text">Analyser →</span>
+                <div class="spinner-btn"></div>
+            </button>
         </div>
     </div>
+</div>
 
-    <!-- Status -->
-    <div id="etat-chargement">
-        <div class="spinner" id="spinner"></div>
-        <span id="statusTexte">Entrez votre capital et cliquez sur Calculer.</span>
+<!-- STATUS -->
+<div class="status-bar">
+    <div class="spinner" id="spinner"></div>
+    <span id="statusTexte">Entrez votre capital et lancez l'analyse.</span>
+</div>
+
+<!-- BARRE RÉSULTATS + FILTRE -->
+<div class="bar-results" id="barResults">
+    <div class="search-wrap">
+        <input type="text" id="filtreNom" placeholder="Chercher un bâtiment…" oninput="filtrer()" autocomplete="off">
     </div>
+    <div class="cpt-results" id="cptResults"></div>
+</div>
 
-    <!-- Barre résultats -->
-    <div class="barre-resultats" id="barreResultats">
-        <span class="compteur" id="compteurResultats"></span>
+<!-- TRI RAPIDE -->
+<div class="sort-bar" id="sortBar">
+    <span class="sort-bar-label">Trier :</span>
+    <button class="sort-pill" onclick="trierPar('performance')" id="pill-performance">Performance</button>
+    <button class="sort-pill" onclick="trierPar('quantite')" id="pill-quantite">Quantité</button>
+    <button class="sort-pill" onclick="trierPar('roi')" id="pill-roi">ROI (jours)</button>
+    <button class="sort-pill" onclick="trierPar('nom')" id="pill-nom">Nom A→Z</button>
+</div>
+
+<!-- LISTE CARDS -->
+<div class="cards-list" id="cardsList"></div>
+
+<!-- MODAL FICHE -->
+<div class="modal-overlay" id="modalOverlay" onclick="fermerModal(event)">
+    <div class="modal" id="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-header-info">
+                <div class="modal-title" id="modalTitre"></div>
+                <div class="modal-subtitle" id="modalSousTitre"></div>
+            </div>
+            <button class="modal-close" onclick="fermerModal()">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
     </div>
-
-    <!-- Tableau -->
-    <div class="conteneur-tableau">
-        <table id="resultsTable" style="display: none;">
-            <thead>
-                <tr>
-                    <th onclick="trierColonne('nom')">
-                        <span class="th-label-long">Bâtiment / Plan conseillé</span>
-                        <span class="th-label-short">Bâtiment</span>
-                        <span class="sort-icon" id="sort-nom">⇅</span>
-                    </th>
-                    <th onclick="trierColonne('quantite')" style="white-space:nowrap;">
-                        <span class="th-label-long">Max</span>
-                        <span class="th-label-short">Max</span>
-                        <span class="sort-icon" id="sort-quantite">⇅</span>
-                    </th>
-                    <th onclick="trierColonne('performance')" style="white-space:nowrap;">
-                        <span class="th-label-long">Performance</span>
-                        <span class="th-label-short">Perf.</span>
-                        <span class="sort-icon" id="sort-performance">⇅</span>
-                    </th>
-                    <th onclick="trierColonne('remboursement')" style="white-space:nowrap;" class="col-roi-mobile">
-                        <span class="th-label-long">ROI (jours)</span>
-                        <span class="th-label-short">ROI</span>
-                        <span class="sort-icon" id="sort-remboursement">⇅</span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody id="resultsBody"></tbody>
-        </table>
-    </div>
-
-</div><!-- /container -->
+</div>
 
 <script>
-    const MON_PROXY = 'https://mon-proxy-empire.yangtiradol.workers.dev/?url=';
-    const API_BUILDINGS = MON_PROXY + encodeURIComponent('https://monde8.empireimmo.com/api/buildings.json');
+    /* ══════════════════════════════════════════════
+       CONFIG & CONSTANTES
+    ══════════════════════════════════════════════ */
+    const PROXY = 'https://mon-proxy-empire.yangtiradol.workers.dev/?url=';
+    const API   = PROXY + encodeURIComponent('https://monde8.empireimmo.com/api/buildings.json');
 
-    /* ────────────────────────────────────────────────
-       SPECS : temps de construction + terrain requis
-    ──────────────────────────────────────────────── */
-    const SPECS_BUILDINGS = {
-        "Chambre seule habitable": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Chambre seule non-aménagée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Chambre seule tout confort": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Chambre seule équipée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Complexe résidentiel géant habitable": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel géant luxueux": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel géant non-aménagé": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel géant tout confort": {"temps_construction": "20", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel millenium habitable": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel millenium luxueux": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel millenium non-aménagé": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel millenium tout confort": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel moyen habitable": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel moyen luxueux": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel moyen non-aménagé": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel moyen tout confort": {"temps_construction": "16", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel palacium habitable": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel palacium luxueux": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel palacium non-aménagé": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel palacium tout confort": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel titanium habitable": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel titanium luxueux": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel titanium non-aménagé": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Complexe résidentiel titanium tout confort": {"temps_construction": "102", "terrain_necessaire": "Grand parc"},
-        "Double complexe résidentiel géant habitable": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
-        "Double complexe résidentiel géant luxueux": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
-        "Double complexe résidentiel géant non-aménagé": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
-        "Double complexe résidentiel géant tout confort": {"temps_construction": "40", "terrain_necessaire": "Grand parc"},
-        "Grand complexe résidentiel habitable": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
-        "Grand complexe résidentiel luxueux": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
-        "Grand complexe résidentiel non-aménagé": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
-        "Grand complexe résidentiel tout confort": {"temps_construction": "24", "terrain_necessaire": "Grand parc"},
-        "Grande maison abandonnée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Grande maison habitable": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Grande maison luxueuse": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Grande maison équipée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Maison moyenne  abandonnée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Maison moyenne habitable": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Maison moyenne luxueuse": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Maison moyenne équipée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Petit complexe résidentiel habitable": {"temps_construction": "12", "terrain_necessaire": "Parc"},
-        "Petit complexe résidentiel luxueux": {"temps_construction": "12", "terrain_necessaire": "Parc"},
-        "Petit complexe résidentiel non-aménagé": {"temps_construction": "12", "terrain_necessaire": "Parc"},
-        "Petit complexe résidentiel tout confort": {"temps_construction": "12", "terrain_necessaire": "Parc"},
-        "Petite maison abandonnée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Petite maison habitable": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Petite maison luxueuse": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Petite maison équipée": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Quadruple complexe résidentiel géant habitable": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
-        "Quadruple complexe résidentiel géant luxueux": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
-        "Quadruple complexe résidentiel géant non-aménagé": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
-        "Quadruple complexe résidentiel géant tout confort": {"temps_construction": "72", "terrain_necessaire": "Grand parc"},
-        "Res. 12 T2 grand luxe": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 12 T2 habitables": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 12 T2 non-aménagés": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 12 T2 équipés": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 12 chambres habitables": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 12 chambres tout confort": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 12 chambres vides": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 12 chambres équipées": {"temps_construction": "4", "terrain_necessaire": "Terrain moyen"},
-        "Res. 24 T2 grand luxe": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 24 T2 habitables": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 24 T2 non-aménagés": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 24 T2 équipés": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 24 chambres habitables": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 24 chambres tout confort": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 24 chambres vides": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 24 chambres équipées": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 48 T2 grand luxe": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 48 T2 habitables": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 48 T2 non-aménagés": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 48 T2 équipés": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 48 chambres habitables": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 48 chambres tout confort": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 48 chambres vides": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 48 chambres équipées": {"temps_construction": "8", "terrain_necessaire": "Parc"},
-        "Res. 6 T2 grand luxe": {"temps_construction": "2", "terrain_necessaire": "Petit terrain"},
-        "Res. 6 T2 habitables": {"temps_construction": "2", "terrain_necessaire": "Petit terrain"},
-        "Res. 6 T2 non-aménagés": {"temps_construction": "2", "terrain_necessaire": "Petit terrain"},
-        "Res. 6 T2 équipés": {"temps_construction": "6", "terrain_necessaire": "Grand terrain"},
-        "Res. 6 chambres habitables": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Res. 6 chambres tout confort": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Res. 6 chambres vides": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Res. 6 chambres équipées": {"temps_construction": "0", "terrain_necessaire": ""},
-        "T2 simple habitable": {"temps_construction": "0", "terrain_necessaire": ""},
-        "T2 simple luxueux": {"temps_construction": "0", "terrain_necessaire": ""},
-        "T2 simple non-aménagé": {"temps_construction": "0", "terrain_necessaire": ""},
-        "T2 simple équipé": {"temps_construction": "0", "terrain_necessaire": ""},
-        "Triple complexe résidentiel géant habitable": {"temps_construction": "64", "terrain_necessaire": "Grand parc"},
-        "Triple complexe résidentiel géant luxueux": {"temps_construction": "64", "terrain_necessaire": "Grand parc"},
-        "Triple complexe résidentiel géant non-aménagé": {"temps_construction": "64", "terrain_necessaire": "Grand parc"},
-        "Triple complexe résidentiel géant tout confort": {"temps_construction": "64", "terrain_necessaire": "Grand parc"}
+    const SPECS = {
+        "Chambre seule habitable": {"t":"0","tr":""},"Chambre seule non-aménagée": {"t":"0","tr":""},"Chambre seule tout confort": {"t":"0","tr":""},"Chambre seule équipée": {"t":"0","tr":""},
+        "Complexe résidentiel géant habitable": {"t":"20","tr":"Grand parc"},"Complexe résidentiel géant luxueux": {"t":"20","tr":"Grand parc"},"Complexe résidentiel géant non-aménagé": {"t":"20","tr":"Grand parc"},"Complexe résidentiel géant tout confort": {"t":"20","tr":"Grand parc"},
+        "Complexe résidentiel millenium habitable": {"t":"102","tr":"Grand parc"},"Complexe résidentiel millenium luxueux": {"t":"102","tr":"Grand parc"},"Complexe résidentiel millenium non-aménagé": {"t":"102","tr":"Grand parc"},"Complexe résidentiel millenium tout confort": {"t":"102","tr":"Grand parc"},
+        "Complexe résidentiel moyen habitable": {"t":"16","tr":"Grand parc"},"Complexe résidentiel moyen luxueux": {"t":"16","tr":"Grand parc"},"Complexe résidentiel moyen non-aménagé": {"t":"16","tr":"Grand parc"},"Complexe résidentiel moyen tout confort": {"t":"16","tr":"Grand parc"},
+        "Complexe résidentiel palacium habitable": {"t":"102","tr":"Grand parc"},"Complexe résidentiel palacium luxueux": {"t":"102","tr":"Grand parc"},"Complexe résidentiel palacium non-aménagé": {"t":"102","tr":"Grand parc"},"Complexe résidentiel palacium tout confort": {"t":"102","tr":"Grand parc"},
+        "Complexe résidentiel titanium habitable": {"t":"102","tr":"Grand parc"},"Complexe résidentiel titanium luxueux": {"t":"102","tr":"Grand parc"},"Complexe résidentiel titanium non-aménagé": {"t":"102","tr":"Grand parc"},"Complexe résidentiel titanium tout confort": {"t":"102","tr":"Grand parc"},
+        "Double complexe résidentiel géant habitable": {"t":"40","tr":"Grand parc"},"Double complexe résidentiel géant luxueux": {"t":"40","tr":"Grand parc"},"Double complexe résidentiel géant non-aménagé": {"t":"40","tr":"Grand parc"},"Double complexe résidentiel géant tout confort": {"t":"40","tr":"Grand parc"},
+        "Grand complexe résidentiel habitable": {"t":"24","tr":"Grand parc"},"Grand complexe résidentiel luxueux": {"t":"24","tr":"Grand parc"},"Grand complexe résidentiel non-aménagé": {"t":"24","tr":"Grand parc"},"Grand complexe résidentiel tout confort": {"t":"24","tr":"Grand parc"},
+        "Grande maison abandonnée": {"t":"0","tr":""},"Grande maison habitable": {"t":"0","tr":""},"Grande maison luxueuse": {"t":"0","tr":""},"Grande maison équipée": {"t":"0","tr":""},
+        "Maison moyenne  abandonnée": {"t":"0","tr":""},"Maison moyenne habitable": {"t":"0","tr":""},"Maison moyenne luxueuse": {"t":"0","tr":""},"Maison moyenne équipée": {"t":"0","tr":""},
+        "Petit complexe résidentiel habitable": {"t":"12","tr":"Parc"},"Petit complexe résidentiel luxueux": {"t":"12","tr":"Parc"},"Petit complexe résidentiel non-aménagé": {"t":"12","tr":"Parc"},"Petit complexe résidentiel tout confort": {"t":"12","tr":"Parc"},
+        "Petite maison abandonnée": {"t":"0","tr":""},"Petite maison habitable": {"t":"0","tr":""},"Petite maison luxueuse": {"t":"0","tr":""},"Petite maison équipée": {"t":"0","tr":""},
+        "Quadruple complexe résidentiel géant habitable": {"t":"72","tr":"Grand parc"},"Quadruple complexe résidentiel géant luxueux": {"t":"72","tr":"Grand parc"},"Quadruple complexe résidentiel géant non-aménagé": {"t":"72","tr":"Grand parc"},"Quadruple complexe résidentiel géant tout confort": {"t":"72","tr":"Grand parc"},
+        "Res. 12 T2 grand luxe": {"t":"4","tr":"Terrain moyen"},"Res. 12 T2 habitables": {"t":"4","tr":"Terrain moyen"},"Res. 12 T2 non-aménagés": {"t":"4","tr":"Terrain moyen"},"Res. 12 T2 équipés": {"t":"4","tr":"Terrain moyen"},
+        "Res. 12 chambres habitables": {"t":"4","tr":"Terrain moyen"},"Res. 12 chambres tout confort": {"t":"4","tr":"Terrain moyen"},"Res. 12 chambres vides": {"t":"4","tr":"Terrain moyen"},"Res. 12 chambres équipées": {"t":"4","tr":"Terrain moyen"},
+        "Res. 24 T2 grand luxe": {"t":"6","tr":"Grand terrain"},"Res. 24 T2 habitables": {"t":"6","tr":"Grand terrain"},"Res. 24 T2 non-aménagés": {"t":"6","tr":"Grand terrain"},"Res. 24 T2 équipés": {"t":"6","tr":"Grand terrain"},
+        "Res. 24 chambres habitables": {"t":"6","tr":"Grand terrain"},"Res. 24 chambres tout confort": {"t":"6","tr":"Grand terrain"},"Res. 24 chambres vides": {"t":"6","tr":"Grand terrain"},"Res. 24 chambres équipées": {"t":"6","tr":"Grand terrain"},
+        "Res. 48 T2 grand luxe": {"t":"8","tr":"Parc"},"Res. 48 T2 habitables": {"t":"8","tr":"Parc"},"Res. 48 T2 non-aménagés": {"t":"8","tr":"Parc"},"Res. 48 T2 équipés": {"t":"8","tr":"Parc"},
+        "Res. 48 chambres habitables": {"t":"8","tr":"Parc"},"Res. 48 chambres tout confort": {"t":"8","tr":"Parc"},"Res. 48 chambres vides": {"t":"8","tr":"Parc"},"Res. 48 chambres équipées": {"t":"8","tr":"Parc"},
+        "Res. 6 T2 grand luxe": {"t":"2","tr":"Petit terrain"},"Res. 6 T2 habitables": {"t":"2","tr":"Petit terrain"},"Res. 6 T2 non-aménagés": {"t":"2","tr":"Petit terrain"},"Res. 6 T2 équipés": {"t":"6","tr":"Grand terrain"},
+        "Res. 6 chambres habitables": {"t":"0","tr":""},"Res. 6 chambres tout confort": {"t":"0","tr":""},"Res. 6 chambres vides": {"t":"0","tr":""},"Res. 6 chambres équipées": {"t":"0","tr":""},
+        "T2 simple habitable": {"t":"0","tr":""},"T2 simple luxueux": {"t":"0","tr":""},"T2 simple non-aménagé": {"t":"0","tr":""},"T2 simple équipé": {"t":"0","tr":""},
+        "Triple complexe résidentiel géant habitable": {"t":"64","tr":"Grand parc"},"Triple complexe résidentiel géant luxueux": {"t":"64","tr":"Grand parc"},"Triple complexe résidentiel géant non-aménagé": {"t":"64","tr":"Grand parc"},"Triple complexe résidentiel géant tout confort": {"t":"64","tr":"Grand parc"}
     };
 
-    /* ── État global ── */
-    let dataBuildings        = null;   // cache API
-    let choixTerrainsUtilisateur = {};
-    let opportunitesCourantes    = [];   // liste calculée, pour tri et filtre
-    let triColonne               = null; // colonne actuellement triée
-    let triSens                  = 1;   // 1 = asc, -1 = desc
+    /* ══════════════════════════════════════════════
+       ÉTAT
+    ══════════════════════════════════════════════ */
+    let dataCache   = null;
+    let opps        = [];       // opportunités calculées
+    let choixTerrain = {};
+    let triActuel   = 'performance';
+    let triSens     = -1;
+    let oppOuverte  = null;     // opportunité affichée dans la modale
 
-    /* ── Formatage ── */
-    const formatNumber = (n) => new Intl.NumberFormat('fr-FR').format(Math.round(n));
+    /* ══════════════════════════════════════════════
+       UTILS
+    ══════════════════════════════════════════════ */
+    const fmt  = n => new Intl.NumberFormat('fr-FR').format(Math.round(n));
+    const fmtS = (n, suffix='') => (n >= 0 ? '+' : '') + fmt(n) + suffix;
 
-    /* ── Persistence budget ── */
-    const budgetInput = document.getElementById('budgetInput');
-    const budgetSauve = localStorage.getItem('empireimmo_budget');
-    if (budgetSauve) budgetInput.value = budgetSauve;
-
-    budgetInput.addEventListener('input', function(e) {
-        const brut = e.target.value.replace(/\D/g, '');
-        if (brut === '') { e.target.value = ''; return; }
-        const formate = new Intl.NumberFormat('fr-FR').format(parseInt(brut, 10));
-        e.target.value = formate;
-        localStorage.setItem('empireimmo_budget', formate);
+    /* ══════════════════════════════════════════════
+       TOGGLE ENTREPRISE
+    ══════════════════════════════════════════════ */
+    document.getElementById('entrepriseCheck').addEventListener('change', function() {
+        document.getElementById('toggleSwitch').classList.toggle('on', this.checked);
     });
 
-    /* ─────────────────────────────────────────
-       toggleDetails : ouvre/ferme le détail
-    ───────────────────────────────────────── */
-    function toggleDetails(idUnique) {
-        const trDetails = document.getElementById(idUnique);
-        const trParent  = document.getElementById('principal-' + idUnique);
-        if (!trDetails) return;
+    /* ══════════════════════════════════════════════
+       PERSISTENCE BUDGET
+    ══════════════════════════════════════════════ */
+    const budgetEl = document.getElementById('budgetInput');
+    const saved    = localStorage.getItem('ei_budget');
+    if (saved) budgetEl.value = saved;
 
-        const estOuvert = trDetails.classList.contains('visible');
-        trDetails.classList.toggle('visible', !estOuvert);
-        if (trParent) trParent.classList.toggle('ouvert', !estOuvert);
-    }
+    budgetEl.addEventListener('input', e => {
+        const raw = e.target.value.replace(/\D/g, '');
+        if (!raw) { e.target.value = ''; return; }
+        const f = new Intl.NumberFormat('fr-FR').format(parseInt(raw, 10));
+        e.target.value = f;
+        localStorage.setItem('ei_budget', f);
+    });
 
-    /* ─────────────────────────────────────────
-       Changement de terrain depuis le select
-    ───────────────────────────────────────── */
-    function modifierTerrainDirect(batNom, indexTerrain) {
-        choixTerrainsUtilisateur[batNom] = parseInt(indexTerrain);
-        analyserStrategieAmortissement(false);
-    }
+    /* ══════════════════════════════════════════════
+       RECOMMANDATION INTELLIGENTE
+    ══════════════════════════════════════════════ */
+    function calcReco(o) {
+        const g = o.gainUnitaire;
+        const cf = o.brut.gainNetLocatif;
+        const roi = o.joiROI;
 
-    /* ─────────────────────────────────────────
-       Filtre par nom (live)
-    ───────────────────────────────────────── */
-    function filtrerTableau() {
-        const terme = document.getElementById('filtreNom').value.toLowerCase().trim();
-        const lignesPrincipales = document.querySelectorAll('tr.ligne-principale');
-        let nbVisibles = 0;
-
-        lignesPrincipales.forEach(tr => {
-            const nomBat = (tr.dataset.nom || '').toLowerCase();
-            const visible = terme === '' || nomBat.includes(terme);
-            tr.style.display = visible ? '' : 'none';
-
-            // Masquer/afficher le détail associé
-            const idDetails = tr.dataset.idDetails;
-            if (idDetails) {
-                const trDet = document.getElementById(idDetails);
-                if (trDet) trDet.style.display = visible ? (trDet.classList.contains('visible') ? 'table-row' : 'none') : 'none';
-            }
-            if (visible) nbVisibles++;
-        });
-
-        // Mettre à jour le compteur
-        const total = lignesPrincipales.length;
-        const cptEl = document.getElementById('compteurResultats');
-        if (terme) {
-            cptEl.innerHTML = `<strong>${nbVisibles}</strong> / ${total} bâtiments`;
-        } else {
-            cptEl.innerHTML = `<strong>${total}</strong> opportunités trouvées`;
+        if (g <= 0 && cf <= 0) {
+            return {
+                label: '🚫 À éviter',
+                cls: 'c-red',
+                action: 'eviter',
+                titre: 'Investissement non rentable',
+                desc: `Ce bâtiment génère une <strong>perte à la revente (${fmt(g)} €)</strong> et un <strong>cashflow négatif (${fmt(cf)} €/j)</strong>. Ne pas investir dans ce bien.`
+            };
         }
+        if (cf <= 0 && g > 0) {
+            return {
+                label: '🚀 Revente seule',
+                cls: 'c-blue',
+                action: 'revente',
+                titre: 'Stratégie achat-revente uniquement',
+                desc: `Ce bien est rentable à la <strong>revente (+${fmt(g)} €)</strong> mais son loyer ne couvre pas les charges (cashflow ${fmt(cf)} €/j). <strong>Construire et revendre immédiatement</strong> après chantier.`
+            };
+        }
+        const roiStr = (roi === Infinity || isNaN(roi)) ? '∞' : roi.toFixed(0);
+        if (roi <= 1000) {
+            return {
+                label: '💰 Rente optimale',
+                cls: 'c-green',
+                action: 'rente',
+                titre: 'Excellente opportunité locative',
+                desc: `ROI en seulement <strong>${roiStr} jours</strong>. Après remboursement, chaque unité rapporte <strong>${fmt(cf)} €/j net</strong>. <strong>Conserver et louer</strong> pour une rente maximale.`
+            };
+        }
+        if (roi <= 2500) {
+            return {
+                label: '⚖️ Mixte',
+                cls: 'c-violet',
+                action: 'mixte',
+                titre: 'Stratégie mixte recommandée',
+                desc: `ROI en <strong>${roiStr} jours</strong> — exploitable mais long. Possible en location si horizon long terme, sinon <strong>la revente (+${fmt(g)} €) est plus immédiate</strong>. À arbitrer selon votre trésorerie.`
+            };
+        }
+        return {
+            label: '🏗️ Revente conseillée',
+            cls: 'c-orange',
+            action: 'revente_ok',
+            titre: 'Plus-value intéressante, location risquée',
+            desc: `Le ROI locatif dépasse <strong>${roiStr} jours</strong> — très long. La plus-value de <strong>+${fmt(g)} €</strong> est en revanche solide. <strong>Revente après chantier</strong> conseillée plutôt que location.`
+        };
     }
 
-    /* ─────────────────────────────────────────
-       Tri par colonne
-    ───────────────────────────────────────── */
-    const colonnesTriMap = {
-        nom:           (a, b) => a.nom.localeCompare(b.nom),
-        quantite:      (a, b) => a.quantiteMax - b.quantiteMax,
-        performance:   (a, b) => {
-            const strat = document.getElementById('strategieSelect').value;
-            // Pour plusvalue : tri par gain/jour (efficacité temporelle)
-            if (strat === 'plusvalue') return a.gainParJourTotal - b.gainParJourTotal;
-            if (strat === 'cashflow') return a.cashflowTotalCumule - b.cashflowTotalCumule;
-            return a.joursRemboursementNum - b.joursRemboursementNum;
-        },
-        remboursement: (a, b) => a.joursRemboursementNum - b.joursRemboursementNum,
-    };
-
-    function trierColonne(col) {
-        // Mise à jour sens
-        if (triColonne === col) {
-            triSens *= -1;
-        } else {
-            triColonne = col;
-            triSens = -1; // desc par défaut (les meilleurs en premier)
-        }
-
-        // Reset icônes
-        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '⇅');
-        const iconEl = document.getElementById('sort-' + col);
-        if (iconEl) iconEl.textContent = triSens === -1 ? '↓' : '↑';
-        document.querySelectorAll('th').forEach(th => th.classList.remove('tri-actif'));
-        document.querySelectorAll('th').forEach(th => {
-            if (th.querySelector('#sort-' + col)) th.classList.add('tri-actif');
-        });
-
-        opportunitesCourantes.sort((a, b) => triSens * colonnesTriMap[col](a, b));
-        rendreTableau(opportunitesCourantes);
-    }
-
-    /* ─────────────────────────────────────────
-       Construction HTML d'une ligne principale
-    ───────────────────────────────────────── */
-    function construireHTML(o, strategieFiltre, terrains) {
-        const tbody = document.getElementById('resultsBody');
-
-        /* --- Ligne principale --- */
-        const trPrincipal = document.createElement('tr');
-        trPrincipal.className = 'ligne-principale';
-        trPrincipal.id = 'principal-' + o.idUnique;
-        trPrincipal.dataset.nom = o.nom.toLowerCase();
-        trPrincipal.dataset.idDetails = o.idUnique;
-        trPrincipal.onclick = () => toggleDetails(o.idUnique);
-
-        let textePerformance = '';
-        if (strategieFiltre === 'plusvalue') {
-            const signe  = o.gainParJourTotal >= 0 ? '+' : '';
-            const classe = o.gainParJourTotal >= 0 ? 'texte-gain' : 'texte-perte';
-            const signeU = o.gainParJourUnitaire >= 0 ? '+' : '';
-            textePerformance = `<span class="${classe}">${signe}${formatNumber(o.gainParJourTotal)} €/j</span><br><span style="font-size:10px;color:var(--texte-gris)">Gain/jour (×cycles)</span>`;
-        } else if (strategieFiltre === 'cashflow') {
-            const signe  = o.cashflowTotalCumule >= 0 ? '+' : '';
-            const classe = o.cashflowTotalCumule >= 0 ? 'texte-gain' : 'texte-perte';
-            textePerformance = `<span class="${classe}">${signe}${formatNumber(o.cashflowTotalCumule)} €/j</span><br><span style="font-size:10px;color:var(--texte-gris)">Rente sécurisée</span>`;
-        } else {
-            textePerformance = `<span class="texte-neutre" style="color:var(--orange-badge)">${o.tempsRemboursement}</span><br><span style="font-size:10px;color:var(--texte-gris)">Vitesse retour</span>`;
-        }
-
-        trPrincipal.innerHTML = `
-            <td class="nom-cliquable">
-                <span class="nom-chevron">▶</span>${o.nom}
-                <span class="type-sous-titre">${o.type}</span>
-                <span class="badge-conseil" style="${o.couleurPlan}">${o.planRecommande}</span>
-            </td>
-            <td><span class="badge-quantite">×${o.quantiteMax}</span></td>
-            <td>${textePerformance}</td>
-            <td class="col-roi-mobile"><span class="badge-temps">${o.tempsRemboursement}</span></td>
-        `;
-        tbody.appendChild(trPrincipal);
-
-        /* --- Terrain select ou badge fixe --- */
-        let zoneTerrainHTML = '';
-        if (o.aBesoinDeSelecteur) {
-            let optionsHTML = '';
-            terrains.forEach((t, idx) => {
-                const sel = t.nom === o.terrainApplique.nom ? 'selected' : '';
-                optionsHTML += `<option value="${idx}" ${sel}>${t.nom} (${formatNumber(t.valeur)} €)</option>`;
-            });
-            zoneTerrainHTML = `
-                <div>
-                    <strong>Terrain :</strong><br>
-                    <select class="selecteur-terrain" onchange="modifierTerrainDirect('${o.nom.replace(/'/g, "\\'")}', this.value)">
-                        ${optionsHTML}
-                    </select>
-                </div>`;
-        } else {
-            zoneTerrainHTML = `<span class="badge-terrain-auto">🔒 Terrain fixe : ${o.terrainApplique.nom}</span>`;
-        }
-
-        /* --- Calculs dérivés pour la fiche --- */
-        const gainUnitaire   = o.gainTotalCumule / o.quantiteMax;
-        const classeGain     = gainUnitaire >= 0 ? 'gain-sub' : 'perte-sub';
-        const signe          = gainUnitaire >= 0 ? '+' : '';
-
-        /* --- Ligne détails --- */
-        const trDetails = document.createElement('tr');
-        trDetails.id = o.idUnique;
-        trDetails.className = 'ligne-details';
-
-        trDetails.innerHTML = `
-        <td colspan="4" style="padding:0">
-            <div class="boite-details">
-                <h4>📊 FICHE STRATÉGIQUE — ${o.nom}</h4>
-
-                <!-- Récap rapide -->
-                <div class="recap-rapide">
-                    <div class="recap-card">
-                        <div class="rc-val">${formatNumber(o.coutGlobalSecurise)} €</div>
-                        <div class="rc-label">Coût global/unité</div>
-                    </div>
-                    <div class="recap-card">
-                        <div class="rc-val" style="color:var(--bleu-flash)">×${o.quantiteMax}</div>
-                        <div class="rc-label">Max achetables</div>
-                    </div>
-                    <div class="recap-card">
-                        <div class="rc-val" style="color:${gainUnitaire >= 0 ? 'var(--vert-gain)' : 'var(--rouge-perte)'}">${signe}${formatNumber(gainUnitaire)} €</div>
-                        <div class="rc-label">Plus-value/unité</div>
-                    </div>
-                    <div class="recap-card">
-                        <div class="rc-val" style="color:var(--orange-badge)">${o.tempsRemboursement}</div>
-                        <div class="rc-label">Seuil ROI</div>
-                    </div>
-                    <div class="recap-card" style="border-color:rgba(52,211,153,0.35)">
-                        <div class="rc-val" style="color:var(--vert-gain)">${signe}${formatNumber(o.gainParJourUnitaire)} €</div>
-                        <div class="rc-label">Gain/jour (1 unité)</div>
-                    </div>
-                    <div class="recap-card" style="border-color:rgba(52,211,153,0.35)">
-                        <div class="rc-val" style="color:var(--vert-gain)">${signe}${formatNumber(o.gainParJourTotal)} €</div>
-                        <div class="rc-label">Gain/jour (×${o.quantiteMax})</div>
-                    </div>
-                </div>
-
-                <!-- Plan + terrain -->
-                <div class="bloc-plan">
-                    <div class="bloc-plan-row">
-                        <strong>Plan :</strong>
-                        <span style="padding: 2px 8px; border-radius:4px; font-weight:800; font-size:12px; ${o.couleurPlan}">${o.planRecommande}</span>
-                    </div>
-                    <div class="bloc-plan-row">
-                        <strong>Chantier :</strong>
-                        <span style="color:var(--texte-blanc); font-size:13px;">${o.tempsConstruction}</span>
-                    </div>
-                    <div class="bloc-plan-row">
-                        <strong>Terrain :</strong>
-                        ${zoneTerrainHTML}
-                    </div>
-                </div>
-
-                <!-- Tableau comptable -->
-                <table class="table-details">
-                    <thead>
-                        <tr>
-                            <th>Élément</th>
-                            <th>Unitaire (poids %)</th>
-                            <th>Total (×${o.quantiteMax})</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="section-titre"><td colspan="3">1 · SORTIES DE TRÉSORERIE SÉCURISÉES</td></tr>
-                        <tr>
-                            <td>Prix du terrain</td>
-                            <td>${formatNumber(o.brut.terrainPrix)} € <span class="badge-pct">${o.pcts.terrain}%</span></td>
-                            <td>${formatNumber(o.brut.terrainPrix * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr>
-                            <td>Coût chantier</td>
-                            <td>${formatNumber(o.brut.construction)} € <span class="badge-pct">${o.pcts.construction}%</span></td>
-                            <td>${formatNumber(o.brut.construction * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr>
-                            <td>Taxe fixe EmpireImmo</td>
-                            <td>1 000 €</td>
-                            <td>${formatNumber(1000 * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr>
-                            <td style="color:var(--orange-badge)">Déficit de chantier</td>
-                            <td style="color:var(--orange-badge)">+${formatNumber(o.deficitChantier)} € <span class="badge-pct">${o.pcts.deficit}%</span></td>
-                            <td style="color:var(--orange-badge)">+${formatNumber(o.deficitChantier * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr class="total-brut">
-                            <td>Coût global (anti-faillite)</td>
-                            <td><strong>${formatNumber(o.coutGlobalSecurise)} €</strong> <span class="badge-pct">100%</span></td>
-                            <td><strong>${formatNumber(o.coutGlobalSecurise * o.quantiteMax)} €</strong></td>
-                        </tr>
-
-                        <tr class="section-titre"><td colspan="3">2 · OPTION REVENTE POST-CHANTIER</td></tr>
-                        <tr>
-                            <td>Valeur finale d'expertise</td>
-                            <td>${formatNumber(o.brut.valeurFinale)} €</td>
-                            <td>${formatNumber(o.brut.valeurFinale * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr class="${classeGain}">
-                            <td>Plus-value nette réelle</td>
-                            <td><strong>${signe}${formatNumber(gainUnitaire)} €</strong> <span class="badge-pct">${signe}${o.pcts.margeRevente}%</span></td>
-                            <td><strong>${signe}${formatNumber(o.gainTotalCumule)} €</strong></td>
-                        </tr>
-                        <tr class="${classeGain}" style="background:rgba(52,211,153,0.08)">
-                            <td style="color:var(--vert-gain);font-weight:700">⚡ Gain/jour (cycles)</td>
-                            <td style="color:var(--vert-gain);font-weight:700">${signe}${formatNumber(o.gainParJourUnitaire)} €/j <span class="badge-pct">${o.tempsConstruction}</span></td>
-                            <td style="color:var(--vert-gain);font-weight:700">${signe}${formatNumber(o.gainParJourTotal)} €/j</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="explication-formule">
-                                ⚡ Gain/jour = Plus-value (${formatNumber(gainUnitaire)} €) ÷ Durée chantier (${o.tempsConstruction}) — permet de comparer des biens à durées différentes (ex: 19M/6j = 3,2M/j > 23M/12j = 1,9M/j)
-                            </td>
-                        </tr>
-
-                        <tr class="section-titre"><td colspan="3">3 · OPTION EXPLOITATION LOCATIVE</td></tr>
-                        <tr>
-                            <td>Loyer brut</td>
-                            <td>${formatNumber(o.brut.loyer)} €</td>
-                            <td>${formatNumber(o.brut.loyer * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr>
-                            <td>Charges d'entretien</td>
-                            <td>−${formatNumber(o.brut.charge)} €</td>
-                            <td>−${formatNumber(o.brut.charge * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr>
-                            <td>Impôts fonciers</td>
-                            <td>−${formatNumber(o.brut.impot)} €</td>
-                            <td>−${formatNumber(o.brut.impot * o.quantiteMax)} €</td>
-                        </tr>
-                        <tr class="total-brut">
-                            <td>Cashflow net / cycle</td>
-                            <td><span class="texte-gain">${formatNumber(o.brut.gainNetLocatif)} €/j</span> <span class="badge-pct">${o.pcts.rendementJour}% rend.</span></td>
-                            <td><span class="texte-gain">${formatNumber(o.brut.gainNetLocatif * o.quantiteMax)} €/j</span></td>
-                        </tr>
-
-                        <tr class="section-titre"><td colspan="3">4 · DIAGNOSTIC ROI</td></tr>
-                        <tr>
-                            <td>Seuil d'amortissement</td>
-                            <td colspan="2" style="text-align:center; font-weight:800; color:var(--orange-badge); font-size:14px;">${o.tempsRemboursement}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="explication-formule">
-                                Coût global (${formatNumber(o.coutGlobalSecurise)} €) ÷ Cashflow net (${formatNumber(o.brut.gainNetLocatif)} €/j) = Nombre de jours pour récupérer la mise.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </td>`;
-        tbody.appendChild(trDetails);
-    }
-
-    /* ─────────────────────────────────────────
-       rendreTableau : vide + reconstruit
-    ───────────────────────────────────────── */
-    function rendreTableau(liste) {
-        const tbody     = document.getElementById('resultsBody');
-        const table     = document.getElementById('resultsTable');
-        const strategieFiltre = document.getElementById('strategieSelect').value;
-        const terrains  = dataBuildings.batiments_terrain || [];
-
-        tbody.innerHTML = '';
-
-        if (liste.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="aucun-resultat">Aucune opportunité — fonds insuffisants ou déficit trop lourd.</td></tr>`;
-        } else {
-            liste.forEach(o => construireHTML(o, strategieFiltre, terrains));
-        }
-
-        table.style.display = 'table';
-
-        // Barre résultats
-        const barre = document.getElementById('barreResultats');
-        barre.classList.add('visible');
-        document.getElementById('compteurResultats').innerHTML = `<strong>${liste.length}</strong> opportunités trouvées`;
-
-        // Ré-appliquer le filtre texte s'il y en a un
-        const terme = document.getElementById('filtreNom').value.trim();
-        if (terme) filtrerTableau();
-    }
-
-    /* ─────────────────────────────────────────
+    /* ══════════════════════════════════════════════
        CALCUL PRINCIPAL
-    ───────────────────────────────────────── */
-    async function analyserStrategieAmortissement(remettreAzeroStatut = true) {
-        const budgetStr   = document.getElementById('budgetInput').value.replace(/\s/g, '').replace(/\u202f/g, '');
-        const budget      = parseFloat(budgetStr);
-        const inclureEnt  = document.getElementById('entrepriseCheck').checked;
-        const strategie   = document.getElementById('strategieSelect').value;
+    ══════════════════════════════════════════════ */
+    async function analyser(resetStatus = true) {
+        const raw    = document.getElementById('budgetInput').value.replace(/[\s\u202f]/g, '');
+        const budget = parseFloat(raw);
+        const inclEnt = document.getElementById('entrepriseCheck').checked;
 
-        const statusTexte = document.getElementById('statusTexte');
-        const spinner     = document.getElementById('spinner');
-        const table       = document.getElementById('resultsTable');
-        const barre       = document.getElementById('barreResultats');
+        const statusEl = document.getElementById('statusTexte');
+        const spinEl   = document.getElementById('spinner');
+        const btn      = document.getElementById('btnCalc');
 
         if (isNaN(budget) || budget <= 0) {
-            statusTexte.textContent = '⚠️ Veuillez entrer une somme valide.';
+            statusEl.textContent = '⚠️ Veuillez entrer un capital valide.';
             return;
         }
 
-        if (remettreAzeroStatut) {
-            statusTexte.textContent = 'Calcul des opportunités…';
-            spinner.classList.add('actif');
-            barre.classList.remove('visible');
-        }
-
-        document.getElementById('resultsBody').innerHTML = '';
+        statusEl.textContent = 'Calcul en cours…';
+        spinEl.classList.add('on');
+        btn.classList.add('loading');
+        document.getElementById('barResults').classList.remove('visible');
+        document.getElementById('sortBar').classList.remove('visible');
+        document.getElementById('cardsList').innerHTML = '';
 
         try {
-            /* -- Chargement API (mis en cache) -- */
-            if (!dataBuildings) {
-                const res = await fetch(API_BUILDINGS);
+            if (!dataCache) {
+                const res = await fetch(API);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                dataBuildings = await res.json();
+                dataCache = await res.json();
             }
 
-            const terrains      = dataBuildings.batiments_terrain || [];
-            let listeBatiments  = [];
+            const terrains = dataCache.batiments_terrain || [];
+            let bats = [];
+            if (dataCache.batiments_perso)       dataCache.batiments_perso.forEach(b => { b.cat = '🏡 Personnel'; bats.push(b); });
+            if (inclEnt && dataCache.batiments_entreprise) dataCache.batiments_entreprise.forEach(b => { b.cat = '🏢 Entreprise'; bats.push(b); });
 
-            if (dataBuildings.batiments_perso)
-                dataBuildings.batiments_perso.forEach(b => { b.categorie = '🏡 Personnel'; listeBatiments.push(b); });
-            if (inclureEnt && dataBuildings.batiments_entreprise)
-                dataBuildings.batiments_entreprise.forEach(b => { b.categorie = '🏢 Entreprise'; listeBatiments.push(b); });
+            opps = [];
 
-            /* -- Calcul opportunités -- */
-            let opportunites = [];
+            bats.forEach((b, idx) => {
+                const pConst = parseFloat(b.construction) || 0;
+                if (pConst <= 0) return;
 
-            listeBatiments.forEach((b, index) => {
-                const prixConstruction = parseFloat(b.construction) || 0;
-                if (prixConstruction <= 0) return;
+                const spec  = SPECS[b.nom] || { t: '0', tr: '' };
+                const tConst = parseInt(spec.t) || 0;
+                const trReq  = spec.tr || '';
 
-                const specs           = SPECS_BUILDINGS[b.nom] || { temps_construction: '0', terrain_necessaire: '' };
-                const tempsConstJours = parseInt(specs.temps_construction) || 0;
-                const terrainReq      = specs.terrain_necessaire || '';
+                let terrain = null;
+                let selecteur = true;
 
-                /* -- Résolution du terrain -- */
-                let terrainApplique = null;
-                let aBesoinDeSelecteur = true;
-
-                if (terrainReq.trim()) {
-                    terrainApplique = terrains.find(t => t.nom.toLowerCase().trim() === terrainReq.toLowerCase().trim());
-                    if (terrainApplique) aBesoinDeSelecteur = false;
+                if (trReq.trim()) {
+                    terrain = terrains.find(t => t.nom.toLowerCase().trim() === trReq.toLowerCase().trim());
+                    if (terrain) selecteur = false;
+                }
+                if (!terrain) {
+                    if (choixTerrain[b.nom] === undefined) choixTerrain[b.nom] = 0;
+                    terrain = terrains[choixTerrain[b.nom]] || terrains[0];
                 }
 
-                if (!terrainApplique) {
-                    if (choixTerrainsUtilisateur[b.nom] === undefined) choixTerrainsUtilisateur[b.nom] = 0;
-                    terrainApplique = terrains[choixTerrainsUtilisateur[b.nom]] || terrains[0];
+                const pTerrain  = parseFloat(terrain.valeur) || 0;
+                const vFinale   = parseFloat(b.valeur) || 0;
+                const loyer     = parseFloat(b.loyer) || 0;
+                const charge    = parseFloat(b.charge) || 0;
+                const impot     = parseFloat(b.impot) || 0;
+
+                const tCharge     = parseFloat(terrain.charge) || 0;
+                const tImpot      = parseFloat(terrain.impot)  || 0;
+                const deficit     = (tCharge + tImpot) * tConst;
+                const coutLanc    = pTerrain + pConst + 1000;
+                const coutTotal   = coutLanc + deficit;
+                const gainUnit    = vFinale - coutTotal;
+                const qteMax      = Math.floor(budget / coutTotal);
+
+                if (qteMax <= 0) return;
+
+                const gainTotalCumul = gainUnit * qteMax;
+                const cfNet          = loyer - (charge + impot);
+                const cfCumul        = cfNet * qteMax;
+
+                let joiROI = Infinity;
+                let roiStr = '∞';
+                if (cfNet > 0) {
+                    joiROI = coutTotal / cfNet;
+                    roiStr = joiROI.toFixed(1) + ' j';
                 }
 
-                /* -- Calculs financiers -- */
-                const prixTerrain       = parseFloat(terrainApplique.valeur) || 0;
-                const valeurFinale      = parseFloat(b.valeur) || 0;
-                const loyer             = parseFloat(b.loyer) || 0;
-                const charge            = parseFloat(b.charge) || 0;
-                const impot             = parseFloat(b.impot) || 0;
+                const pTer = ((pTerrain / coutTotal) * 100).toFixed(1);
+                const pCon = ((pConst / coutTotal) * 100).toFixed(1);
+                const pDef = ((deficit / coutTotal) * 100).toFixed(1);
+                const pMar = ((gainUnit / coutTotal) * 100).toFixed(1);
+                const pRnd = cfNet > 0 ? ((cfNet / coutTotal) * 100).toFixed(2) : '0.00';
 
-                const deficitChantier   = (charge + impot) * tempsConstJours;
-                const coutLancement     = prixTerrain + prixConstruction + 1000;
-                const coutGlobalSecurise= coutLancement + deficitChantier;
-                const gainUnitaire      = valeurFinale - coutGlobalSecurise;
-                const quantiteMax       = Math.floor(budget / coutGlobalSecurise);
-
-                if (quantiteMax <= 0) return;
-
-                const gainTotalCumule   = gainUnitaire * quantiteMax;
-                const gainNetLocatif    = loyer - (charge + impot);
-                const cashflowTotalCumule = gainNetLocatif * quantiteMax;
-
-                let joursRemboursementNum = Infinity;
-                let tempsRemboursement    = 'Loyer nul / Déficit';
-                if (gainNetLocatif > 0) {
-                    joursRemboursementNum = coutGlobalSecurise / gainNetLocatif;
-                    tempsRemboursement    = `${joursRemboursementNum.toFixed(1)} j`;
-                }
-
-                /* -- Plan recommandé -- */
-                let planRecommande = '';
-                let couleurPlan    = '';
-                if (gainUnitaire <= 0 && gainNetLocatif <= 0) {
-                    planRecommande = '❌ PERTE SÈCHE (Éviter)';
-                    couleurPlan    = 'background:rgba(251,113,133,0.15);color:var(--rouge-perte);';
-                } else if (gainNetLocatif <= 0 && gainUnitaire > 0) {
-                    planRecommande = '🚀 ACHAT-REVENTE IMPÉRATIF';
-                    couleurPlan    = 'background:rgba(56,189,248,0.15);color:var(--bleu-flash);';
-                } else if (joursRemboursementNum <= 1000) {
-                    planRecommande = '💰 RENTE ULTRA RENTABLE';
-                    couleurPlan    = 'background:rgba(52,211,153,0.15);color:var(--vert-gain);';
-                } else if (joursRemboursementNum <= 2000) {
-                    planRecommande = '⚖️ MIXTE / ARBITRAGE';
-                    couleurPlan    = 'background:rgba(167,139,250,0.15);color:var(--violet-badge);';
-                } else {
-                    planRecommande = '🚀 ACHAT-REVENTE CONSEILLÉ';
-                    couleurPlan    = 'background:rgba(251,191,36,0.15);color:var(--orange-badge);';
-                }
-
-                /* -- Pourcentages -- */
-                const pctTerrain       = ((prixTerrain        / coutGlobalSecurise) * 100).toFixed(1);
-                const pctConst         = ((prixConstruction   / coutGlobalSecurise) * 100).toFixed(1);
-                const pctDeficit       = ((deficitChantier    / coutGlobalSecurise) * 100).toFixed(1);
-                const pctMargeRevente  = ((gainUnitaire       / coutGlobalSecurise) * 100).toFixed(1);
-                const pctRendementJour = gainNetLocatif > 0
-                    ? ((gainNetLocatif / coutGlobalSecurise) * 100).toFixed(2)
-                    : '0.00';
-
-                // Gain par jour = gain unitaire / nb jours de construction (minimum 1 jour)
-                // Cela permet de comparer l'efficacité temporelle : 19M en 6j > 23M en 12j
-                // car en 12j on peut faire 2 cycles de 6j = 38M
-                const dureeEffective = tempsConstJours > 0 ? tempsConstJours : 1;
-                const gainParJourUnitaire = gainUnitaire / dureeEffective;
-                const gainParJourTotal = gainParJourUnitaire * quantiteMax;
-
-                opportunites.push({
-                    idUnique: `details-${index}`,
+                const o = {
+                    id: `opp-${idx}`,
                     nom: b.nom,
-                    type: b.categorie,
-                    coutGlobalSecurise,
-                    deficitChantier,
-                    quantiteMax,
-                    gainTotalCumule,
-                    cashflowTotalCumule,
-                    gainParJourUnitaire,
-                    gainParJourTotal,
-                    tempsConstJours: dureeEffective,
-                    joursRemboursementNum,
-                    tempsRemboursement,
-                    tempsConstruction: tempsConstJours > 0 ? `${tempsConstJours} jours` : 'Immédiat',
-                    terrainNecessaire: terrainReq,
-                    aBesoinDeSelecteur,
-                    terrainApplique,
-                    planRecommande,
-                    couleurPlan,
-                    pcts: { terrain: pctTerrain, construction: pctConst, deficit: pctDeficit, margeRevente: pctMargeRevente, rendementJour: pctRendementJour },
-                    brut: { terrainPrix: prixTerrain, construction: prixConstruction, valeurFinale, loyer, charge, impot, gainNetLocatif }
-                });
+                    cat: b.cat,
+                    coutTotal, deficit, qteMax, gainTotalCumul, cfCumul,
+                    joiROI, roiStr,
+                    tConstStr: tConst > 0 ? `${tConst} jours` : 'Immédiat',
+                    terrainReq: trReq, selecteur, terrain,
+                    gainUnitaire: gainUnit,
+                    pcts: { ter: pTer, con: pCon, def: pDef, mar: pMar, rnd: pRnd },
+                    brut: { pTerrain, pConst, vFinale, loyer, charge, impot, gainNetLocatif: cfNet, tCharge, tImpot }
+                };
+                o.reco = calcReco(o);
+                opps.push(o);
             });
 
-            /* -- Tri selon stratégie par défaut -- */
-            if (strategie === 'plusvalue')
-                // On trie par gain/jour pour favoriser les biens courts à relancer
-                // Ex : 19M en 6j = 38M en 12j > 23M en 12j (un seul cycle)
-                opportunites.sort((a, b) => b.gainParJourTotal - a.gainParJourTotal);
-            else if (strategie === 'cashflow')
-                opportunites.sort((a, b) => b.cashflowTotalCumule - a.cashflowTotalCumule);
-            else
-                opportunites.sort((a, b) => a.joursRemboursementNum - b.joursRemboursementNum);
-
-            opportunitesCourantes = opportunites; // mémoriser pour tri ultérieur
-
-            rendreTableau(opportunites);
-
-            if (remettreAzeroStatut)
-                statusTexte.textContent = 'Cliquez sur un bâtiment pour voir sa fiche complète.';
+            trierOpp();
+            afficherCards();
+            statusEl.textContent = `${opps.length} opportunités — Appuyez pour voir la fiche détaillée.`;
 
         } catch (err) {
             console.error(err);
-            statusTexte.textContent = '⚠️ Erreur réseau ou calcul — vérifiez votre connexion au proxy.';
-            document.getElementById('resultsTable').style.display = 'none';
+            statusEl.textContent = '⚠️ Erreur réseau — vérifiez votre connexion.';
         } finally {
-            spinner.classList.remove('actif');
+            spinEl.classList.remove('on');
+            btn.classList.remove('loading');
         }
+    }
+
+    /* ══════════════════════════════════════════════
+       TRI
+    ══════════════════════════════════════════════ */
+    function trierOpp() {
+        const strat = document.getElementById('strategieSelect').value;
+        opps.sort((a, b) => {
+            let va, vb;
+            switch(triActuel) {
+                case 'performance':
+                    if (strat === 'plusvalue') { va = a.gainTotalCumul; vb = b.gainTotalCumul; }
+                    else if (strat === 'cashflow') { va = a.cfCumul; vb = b.cfCumul; }
+                    else { va = -a.joiROI; vb = -b.joiROI; }
+                    break;
+                case 'roi':    va = -a.joiROI; vb = -b.joiROI; break;
+                case 'quantite': va = a.qteMax; vb = b.qteMax; break;
+                case 'nom': return triSens * a.nom.localeCompare(b.nom);
+            }
+            return triSens * (va - vb);
+        });
+    }
+
+    function trierPar(col) {
+        if (triActuel === col) triSens *= -1;
+        else { triActuel = col; triSens = -1; }
+        document.querySelectorAll('.sort-pill').forEach(p => p.classList.remove('active'));
+        document.getElementById('pill-' + col)?.classList.add('active');
+        trierOpp();
+        afficherCards();
+    }
+
+    /* ══════════════════════════════════════════════
+       AFFICHAGE CARDS
+    ══════════════════════════════════════════════ */
+    let afficherTout = false; // toggle "voir tous les bâtiments"
+
+    function creerCard(o, rang, strat) {
+        const card = document.createElement('div');
+        const estTop = rang < 3;
+        card.className = 'card' + (estTop ? ' card-top' : '');
+        card.style.animationDelay = `${Math.min(rang * 0.04, 0.4)}s`;
+        card.onclick = () => ouvrirModal(o);
+
+        let perf = '';
+        if (strat === 'plusvalue') {
+            const cls = o.gainTotalCumul >= 0 ? 't-green' : 't-red';
+            perf = `<div class="metric-chip"><div class="val ${cls}">${fmtS(o.gainTotalCumul, ' €')}</div><div class="lbl">Plus-value totale</div></div>`;
+        } else if (strat === 'cashflow') {
+            const cls = o.cfCumul >= 0 ? 't-green' : 't-red';
+            perf = `<div class="metric-chip"><div class="val ${cls}">${fmtS(o.cfCumul, ' €/j')}</div><div class="lbl">Rente nette</div></div>`;
+        } else {
+            perf = `<div class="metric-chip"><div class="val t-orange">${o.roiStr}</div><div class="lbl">ROI</div></div>`;
+        }
+
+        const topBadge = estTop ? `<div class="top-rank">#${rang + 1}</div>` : '';
+
+        card.innerHTML = `
+            <div class="card-main">
+                ${topBadge}
+                <div class="card-name-row">
+                    <div>
+                        <div class="card-name">${o.nom}</div>
+                        <div class="card-type">${o.cat} · ${o.tConstStr}</div>
+                    </div>
+                    <span class="card-badge ${o.reco.cls}">${o.reco.label}</span>
+                </div>
+                <div class="card-metrics">
+                    ${perf}
+                    <div class="metric-chip"><div class="val t-blue">×${o.qteMax}</div><div class="lbl">Max achet.</div></div>
+                    <div class="metric-chip"><div class="val">${fmt(o.coutTotal)} €</div><div class="lbl">Coût/unité</div></div>
+                    <div class="metric-chip"><div class="val t-orange">${o.roiStr}</div><div class="lbl">ROI</div></div>
+                </div>
+            </div>
+            <div class="card-tap-hint">APPUYER POUR LA FICHE COMPLÈTE →</div>
+        `;
+        return card;
+    }
+
+    function afficherCards() {
+        const liste  = document.getElementById('cardsList');
+        const terme  = document.getElementById('filtreNom').value.toLowerCase().trim();
+        const strat  = document.getElementById('strategieSelect').value;
+
+        // Filtrage par nom
+        let base = terme ? opps.filter(o => o.nom.toLowerCase().includes(terme)) : opps;
+
+        // Séparation rentables / pertes sèches
+        const rentables   = base.filter(o => o.reco.action !== 'eviter');
+        const pertesSech  = base.filter(o => o.reco.action === 'eviter');
+
+        liste.innerHTML = '';
+
+        if (base.length === 0) {
+            liste.innerHTML = `<div class="empty-state">Aucun bâtiment trouvé<br>pour ce capital ou ce filtre.</div>`;
+        } else {
+            // ── TOP 3 ──
+            const top3 = rentables.slice(0, 3);
+            const reste = rentables.slice(3);
+
+            if (top3.length > 0) {
+                const sep = document.createElement('div');
+                sep.className = 'rank-sep';
+                sep.innerHTML = `🏆 TOP 3 — ${strat === 'plusvalue' ? 'Plus-value' : strat === 'cashflow' ? 'Rente nette' : 'ROI rapide'}`;
+                liste.appendChild(sep);
+                top3.forEach((o, i) => liste.appendChild(creerCard(o, i, strat)));
+            }
+
+            if (reste.length > 0) {
+                const sep2 = document.createElement('div');
+                sep2.className = 'rank-sep';
+                sep2.textContent = `Autres opportunités (${reste.length})`;
+                liste.appendChild(sep2);
+                reste.forEach((o, i) => liste.appendChild(creerCard(o, i + 3, strat)));
+            }
+
+            // ── PERTES SÈCHES (masquées par défaut) ──
+            if (pertesSech.length > 0) {
+                const sepLoss = document.createElement('div');
+                sepLoss.className = 'rank-sep rank-sep-loss';
+                liste.appendChild(sepLoss);
+
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'btn-toggle-pertes';
+                toggleBtn.id = 'btnTogglePertes';
+                toggleBtn.textContent = afficherTout
+                    ? `▲ Masquer les ${pertesSech.length} non-rentables`
+                    : `▼ Voir aussi les ${pertesSech.length} bâtiments non-rentables`;
+                toggleBtn.onclick = () => {
+                    afficherTout = !afficherTout;
+                    afficherCards();
+                };
+                liste.appendChild(toggleBtn);
+
+                if (afficherTout) {
+                    pertesSech.forEach((o, i) => liste.appendChild(creerCard(o, rentables.length + i, strat)));
+                }
+            }
+        }
+
+        // Barre résultats + tri
+        document.getElementById('barResults').classList.add('visible');
+        document.getElementById('sortBar').classList.add('visible');
+        document.getElementById('pill-' + triActuel)?.classList.add('active');
+
+        const cpt = document.getElementById('cptResults');
+        const nb  = rentables.length;
+        cpt.innerHTML = terme
+            ? `<b>${base.length}</b>/${opps.length}`
+            : `<b>${nb}</b> rentables · <span style="color:var(--text-3)">${pertesSech.length} masquées</span>`;
+    }
+
+    function filtrer() { afficherCards(); }
+    function relancer() { if (opps.length > 0) analyser(false); }
+
+    /* ══════════════════════════════════════════════
+       MODAL FICHE
+    ══════════════════════════════════════════════ */
+    function ouvrirModal(o) {
+        oppOuverte = o;
+        document.getElementById('modalTitre').textContent = o.nom;
+        document.getElementById('modalSousTitre').textContent = `${o.cat}  ·  ${o.tConstStr}`;
+
+        const body = document.getElementById('modalBody');
+        const terrains = dataCache?.batiments_terrain || [];
+        const gUnit = o.gainUnitaire;
+        const clsG  = gUnit >= 0 ? 't-green' : 't-red';
+        const sigG  = gUnit >= 0 ? '+' : '';
+
+        // Terrain HTML
+        let terrainHTML = '';
+        if (o.selecteur) {
+            let opts = terrains.map((t, i) => {
+                const sel = t.nom === o.terrain.nom ? 'selected' : '';
+                return `<option value="${i}" ${sel}>${t.nom} — ${fmt(t.valeur)} €</option>`;
+            }).join('');
+            terrainHTML = `
+            <div class="terrain-block">
+                <label>Terrain utilisé (modifiable)</label>
+                <div class="select-wrap">
+                    <select onchange="changerTerrain('${o.nom.replace(/'/g,"\\'")}', this.value)">${opts}</select>
+                </div>
+            </div>`;
+        } else {
+            terrainHTML = `
+            <div style="margin-bottom:12px;">
+                <div class="section-title">Terrain</div>
+                <span class="badge-terrain-fixe">🔒 ${o.terrain.nom} — ${fmt(o.brut.pTerrain)} €</span>
+            </div>`;
+        }
+
+        // Barre ROI visuelle
+        const roiPct = o.joiROI === Infinity ? 0 : Math.min(100, Math.max(2, 100 - (o.joiROI / 3000) * 100));
+        const roiHtml = `
+        <div class="roi-bar-wrap">
+            <div class="roi-bar-label">
+                <span class="name">Seuil d'amortissement</span>
+                <span class="val">${o.roiStr}</span>
+            </div>
+            <div class="roi-bar"><div class="roi-bar-fill" style="width:${roiPct}%"></div></div>
+            <div class="roi-formula">${fmt(o.coutTotal)} € ÷ ${fmt(o.brut.gainNetLocatif)} €/j = ${o.roiStr}</div>
+        </div>`;
+
+        // Tableau financier
+        const cfCls = o.brut.gainNetLocatif >= 0 ? 't-green' : 't-red';
+
+        body.innerHTML = `
+        <!-- RECOMMANDATION -->
+        <div class="reco-block ${o.reco.cls}">
+            <div class="reco-title">${o.reco.label} — ${o.reco.titre}</div>
+            <div class="reco-desc">${o.reco.desc}</div>
+        </div>
+
+        <!-- TERRAIN -->
+        ${terrainHTML}
+
+        <!-- KPI RAPIDES -->
+        <div class="section">
+            <div class="section-title">Résumé chiffré</div>
+            <div class="kpi-grid">
+                <div class="kpi">
+                    <div class="kpi-val">${fmt(o.coutTotal)} €</div>
+                    <div class="kpi-lbl">Coût / unité</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-val t-blue">×${o.qteMax}</div>
+                    <div class="kpi-lbl">Max achetables</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-val ${clsG}">${sigG}${fmt(gUnit)} €</div>
+                    <div class="kpi-lbl">Plus-value/unité</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-val ${cfCls}">${fmtS(o.brut.gainNetLocatif, ' €/j')}</div>
+                    <div class="kpi-lbl">Cashflow net</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI -->
+        <div class="section">
+            <div class="section-title">Amortissement</div>
+            ${roiHtml}
+        </div>
+
+        <!-- TABLEAU FINANCIER -->
+        <div class="section">
+            <div class="section-title">Détail comptable — ×${o.qteMax} unités</div>
+            <table class="fin-table">
+                <thead>
+                    <tr>
+                        <th>Poste</th>
+                        <th>Unitaire <span class="th-pct">% du coût</span></th>
+                        <th>Total (×${o.qteMax})</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="tr-section"><td colspan="3">1 · COÛTS DE LANCEMENT</td></tr>
+                    <tr>
+                        <td>Terrain</td>
+                        <td>${fmt(o.brut.pTerrain)} € <span class="pct-badge">${o.pcts.ter}%</span></td>
+                        <td>${fmt(o.brut.pTerrain * o.qteMax)} €</td>
+                    </tr>
+                    <tr>
+                        <td>Construction</td>
+                        <td>${fmt(o.brut.pConst)} € <span class="pct-badge">${o.pcts.con}%</span></td>
+                        <td>${fmt(o.brut.pConst * o.qteMax)} €</td>
+                    </tr>
+                    <tr>
+                        <td>Taxe fixe</td>
+                        <td>1 000 € <span class="pct-badge">${((1000/o.coutTotal)*100).toFixed(1)}%</span></td>
+                        <td>${fmt(1000 * o.qteMax)} €</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--orange)">Déficit chantier <span class="pct-badge">terrain seul</span></td>
+                        <td style="color:var(--orange)">${fmt(o.deficit)} € <span class="pct-badge">${o.pcts.def}%</span></td>
+                        <td style="color:var(--orange)">${fmt(o.deficit * o.qteMax)} €</td>
+                    </tr>
+                    <tr class="tr-note">
+                        <td colspan="3">Pendant ${o.tConstStr} : charges terrain ${fmt(o.brut.tCharge)} €/j + impôts terrain ${fmt(o.brut.tImpot)} €/j</td>
+                    </tr>
+                    <tr class="tr-total">
+                        <td>Coût global sécurisé</td>
+                        <td><strong>${fmt(o.coutTotal)} €</strong> <span class="pct-badge">100%</span></td>
+                        <td><strong>${fmt(o.coutTotal * o.qteMax)} €</strong></td>
+                    </tr>
+
+                    <tr class="tr-section"><td colspan="3">2 · OPTION REVENTE</td></tr>
+                    <tr>
+                        <td>Valeur d'expertise</td>
+                        <td>${fmt(o.brut.vFinale)} €</td>
+                        <td>${fmt(o.brut.vFinale * o.qteMax)} €</td>
+                    </tr>
+                    <tr class="${gUnit >= 0 ? 'tr-gain' : 'tr-loss'}">
+                        <td>Plus-value nette</td>
+                        <td><strong class="${clsG}">${sigG}${fmt(gUnit)} €</strong> <span class="pct-badge">${sigG}${o.pcts.mar}%</span></td>
+                        <td><strong class="${clsG}">${sigG}${fmt(o.gainTotalCumul)} €</strong></td>
+                    </tr>
+
+                    <tr class="tr-section"><td colspan="3">3 · OPTION LOCATION (par jour)</td></tr>
+                    <tr>
+                        <td>Loyer brut</td>
+                        <td>${fmt(o.brut.loyer)} €/j</td>
+                        <td>${fmt(o.brut.loyer * o.qteMax)} €/j</td>
+                    </tr>
+                    <tr>
+                        <td>Charges</td>
+                        <td>−${fmt(o.brut.charge)} €/j</td>
+                        <td>−${fmt(o.brut.charge * o.qteMax)} €/j</td>
+                    </tr>
+                    <tr>
+                        <td>Impôts</td>
+                        <td>−${fmt(o.brut.impot)} €/j</td>
+                        <td>−${fmt(o.brut.impot * o.qteMax)} €/j</td>
+                    </tr>
+                    <tr class="tr-total">
+                        <td>Cashflow net</td>
+                        <td><span class="${cfCls}">${fmtS(o.brut.gainNetLocatif, ' €/j')}</span> <span class="pct-badge">${o.pcts.rnd}%/j</span></td>
+                        <td><span class="${cfCls}">${fmtS(o.brut.gainNetLocatif * o.qteMax, ' €/j')}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="fin-legend">% = part du coût global unitaire (${fmt(o.coutTotal)} €)</div>
+        </div>
+        `;
+
+        document.getElementById('modalOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function fermerModal(e) {
+        if (e && e.target !== document.getElementById('modalOverlay')) return;
+        document.getElementById('modalOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+        oppOuverte = null;
+    }
+
+    // Fermer avec Escape
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerModal(); });
+
+    /* ══════════════════════════════════════════════
+       CHANGEMENT TERRAIN (depuis la modale)
+    ══════════════════════════════════════════════ */
+    function changerTerrain(nomBat, idx) {
+        choixTerrain[nomBat] = parseInt(idx);
+        dataCache = null; // force recalcul (le cache d'API reste mais pas les opps)
+        const strat   = document.getElementById('strategieSelect').value;
+        const inclEnt = document.getElementById('entrepriseCheck').checked;
+        fermerModal();
+        analyser(false).then(() => {
+            // Ré-ouvrir la fiche mise à jour
+            const updated = opps.find(o => o.nom === nomBat);
+            if (updated) ouvrirModal(updated);
+        });
     }
 </script>
 </body>
